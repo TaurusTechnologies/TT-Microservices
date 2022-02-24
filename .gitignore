@@ -1,0 +1,8 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/TT-Dashboard-Microservice/TT-Dashboard-Microservice/ClientApp/node_modules
+/.vs
+/TT-Dashboard-Microservice/.vs/TT-Dashboard-Microservice
+/TT-Dashboard-Microservice/TT-Dashboard-Microservice/obj
