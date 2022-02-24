@@ -6,3 +6,4 @@
 /.vs
 /TT-Dashboard-Microservice/.vs/TT-Dashboard-Microservice
 /TT-Dashboard-Microservice/TT-Dashboard-Microservice/obj
+/TT-Dashboard-Microservice/TT-Dashboard-Microservice/bin/Debug/netcoreapp3.1

@@ -29,14 +29,6 @@ namespace TT_Dashboard_Microservice
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-
-            // Configure JWT authentication.
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearerConfiguration(
-                    Configuration["Jwt:Issuer"],
-                    Configuration["Jwt:Audience"]
-                );
-
             services.AddCors(options =>
             {
                 options.AddPolicy("ProductionPolicy",
