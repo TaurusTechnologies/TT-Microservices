@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using TT_Dashboard_Microservice.Jwt;
 using TT_Dashboard_Microservice.Models;
+using DbContext = TT_Dashboard_Microservice.Models.DbContext;
 
 namespace TT_Dashboard_Microservice
 {
@@ -42,7 +43,7 @@ namespace TT_Dashboard_Microservice
             });
 
             // TODO - do not save the connection string here!
-            services.AddDbContext<PM_PRODContext>(options => options.UseSqlServer("Data source=ARIZONA;Initial Catalog=PM_PROD;Persist Security Info=True;User ID=PM_DEV;Password=$P4SSw0Rd_2"));
+            services.AddDbContext<DbContext>(options => options.UseSqlServer("Data source=ARIZONA;Initial Catalog=PM_PROD;Persist Security Info=True;User ID=PM_DEV;Password=$P4SSw0Rd_2"));
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

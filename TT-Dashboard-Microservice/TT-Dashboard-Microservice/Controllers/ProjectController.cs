@@ -1,32 +1,34 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Linq;
+using AuthenticationandAuthorization.Controllers;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using TT_Dashboard_Microservice.Models;
 
 namespace TT_Dashboard_Microservice.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ProjectController : ControllerBase
+    public class ProjectController : BaseController
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+        private readonly DbContext _context;
 
-        private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ILogger<ProjectController> _logger;
 
-        public ProjectController(ILogger<WeatherForecastController> logger)
+        public ProjectController(ILogger<ProjectController> logger, DbContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
-        [HttpGet]
+        /// <summary>
+        ///     Test the string
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet(nameof(Get))]
         public string Get()
         {
-            return "Test String";
+            var test = _context.Projects.FirstOrDefault(x => x.IsInvoiced == true);
+            return test?.Name;
         }
     }
 }

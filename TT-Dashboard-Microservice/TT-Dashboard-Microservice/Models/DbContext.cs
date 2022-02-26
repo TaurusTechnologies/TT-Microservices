@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace TT_Dashboard_Microservice.Models
 {
-    public partial class PM_PRODContext : DbContext
+    public partial class DbContext : Microsoft.EntityFrameworkCore.DbContext
     {
-        public PM_PRODContext()
+        public DbContext()
         {
         }
 
-        public PM_PRODContext(DbContextOptions<PM_PRODContext> options)
+        public DbContext(DbContextOptions<DbContext> options)
             : base(options)
         {
         }
