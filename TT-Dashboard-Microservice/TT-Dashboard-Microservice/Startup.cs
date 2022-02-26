@@ -127,7 +127,7 @@ namespace TT_Dashboard_Microservice
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Projects API v1");
-                c.RoutePrefix = "";
+                c.RoutePrefix = "swagger";
             });
 
             app.UseHttpsRedirection();
