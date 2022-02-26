@@ -122,6 +122,14 @@ namespace TT_Dashboard_Microservice
                 app.UseHsts();
             }
 
+            // Swagger Configuration in API  
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Projects API v1");
+                c.RoutePrefix = "";
+            });
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
@@ -143,14 +151,6 @@ namespace TT_Dashboard_Microservice
                 {
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
-            });
-
-            // Swagger Configuration in API  
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Projects API v1");
-
             });
         }
     }
