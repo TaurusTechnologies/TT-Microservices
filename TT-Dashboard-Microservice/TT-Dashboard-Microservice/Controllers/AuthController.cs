@@ -7,6 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AuthenticationandAuthorization.Controllers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
@@ -24,7 +25,7 @@ namespace TT_Dashboard_Microservice.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController: ControllerBase
+    public class AuthController: BaseController
     {
         private IConfiguration Configuration { get; set; }
         public AuthController(IConfiguration config)

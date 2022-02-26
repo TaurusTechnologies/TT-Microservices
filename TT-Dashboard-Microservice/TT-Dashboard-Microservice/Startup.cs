@@ -122,25 +122,27 @@ namespace TT_Dashboard_Microservice
                 app.UseHsts();
             }
 
-            // Swagger Configuration in API  
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Projects API v1");
-                c.RoutePrefix = "swagger";
-            });
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
             app.UseRouting();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
+            });
+
+            app.UseAuthentication();
+            // Swagger Configuration in API  
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Projects API v1");
+                c.RoutePrefix = "swagger";
             });
 
             app.UseSpa(spa =>
