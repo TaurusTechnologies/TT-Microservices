@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TT_Dashboard_Microservice.Models.Dtos;
 
 namespace TT_Dashboard_Microservice.Models.Views
 {
@@ -60,6 +61,17 @@ namespace TT_Dashboard_Microservice.Models.Views
 
     //}
 
+    public class ProjectDto
+    {
+        public int ProjectId { get; set; }
+        public string Name { get; set; }
+        public DateTime? Start { get; set; }
+        public DateTime? Completion { get; set; }
+        public string DateDescription { get; set; }
+        public IList<ProjectStartStopDateDto> StartStopDates { get; set; }
+    }
+
+    // OLD class
     public class ProjectVD
     {
         public Project Project;
@@ -98,6 +110,8 @@ namespace TT_Dashboard_Microservice.Models.Views
 
         public int ProjectRoomImageCount(int id)
         {
+            return 0; // TODO - re-integrate.
+
             //var projectRoom = DataContext.ProjectRooms.Single(x => x.ProjectRoomId == id);
             //var images = DataContext.ItemFiles.Where(x =>
             //    x.ProjectId == projectRoom.ProjectId && x.RoomId == projectRoom.RoomId && x.IsImage);
