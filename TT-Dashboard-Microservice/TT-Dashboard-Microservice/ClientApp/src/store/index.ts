@@ -1,5 +1,6 @@
 import * as WeatherForecasts from './WeatherForecasts';
 import * as Counter from './Counter';
+//import * as Project from './Project';
 
 // The top-level state object
 export interface ApplicationState {

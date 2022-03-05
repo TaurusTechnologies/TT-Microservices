@@ -61,6 +61,11 @@ namespace TT_Dashboard_Microservice.Models.Views
 
     //}
 
+    public class ProjectRoomsDto
+    {
+
+    }
+
     public class ProjectDto
     {
         public int ProjectId { get; set; }

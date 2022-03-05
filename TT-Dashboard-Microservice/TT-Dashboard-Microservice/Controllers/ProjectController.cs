@@ -50,9 +50,9 @@ namespace TT_Dashboard_Microservice.Controllers
                     Completion = end?.EndDate,
                     DateDescription = start?.Description,
                     StartStopDates = _context.ProjectStartStopDates.Where(x => x.ProjectId == project.ProjectId)
-                        .Select(x=>new ProjectStartStopDateDto
+                        .Select(x => new ProjectStartStopDateDto
                         {
-                            ProjectId = x.ProjectId, StartDate = x.StartDate, EndDate = x.EndDate, 
+                            ProjectId = x.ProjectId, StartDate = x.StartDate, EndDate = x.EndDate,
                             Description = x.Description, ProjectStartStopDateId = x.ProjectStartStopDateId
                         }).ToList()
                 };
@@ -97,5 +97,13 @@ namespace TT_Dashboard_Microservice.Controllers
             return null;
         }
 
+        [HttpGet("rooms/{id}")]
+        public ProjectRoomsDto GetProjectRooms(int id)
+        {
+            return new ProjectRoomsDto
+            {
+            };
+        }
     }
+
 }
