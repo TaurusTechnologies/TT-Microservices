@@ -44,12 +44,12 @@ namespace TT_Dashboard_Microservice.Controllers
 
                 return new ProjectDto
                 {
-                    ProjectId = project.ProjectId,
-                    Name = project.Name,
-                    Start = start?.StartDate,
-                    Completion = end?.EndDate,
-                    DateDescription = start?.Description,
-                    StartStopDates = _context.ProjectStartStopDates.Where(x => x.ProjectId == project.ProjectId)
+                    projectId = project.ProjectId,
+                    name = project.Name,
+                    start = start?.StartDate,
+                    completion = end?.EndDate,
+                    dateDescription = start?.Description,
+                    startStopDates = _context.ProjectStartStopDates.Where(x => x.ProjectId == project.ProjectId)
                         .Select(x => new ProjectStartStopDateDto
                         {
                             ProjectId = x.ProjectId, StartDate = x.StartDate, EndDate = x.EndDate,

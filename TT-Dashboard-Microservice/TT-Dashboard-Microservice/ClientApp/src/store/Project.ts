@@ -7,11 +7,11 @@ import { AppThunkAction } from '.';
 export interface ProjectState {
     isLoading: boolean;
     id: number;
-    project?: Project;
+    project: Project;
 }
 
 export interface Project {
-    id: number;
+    projectId: number;
     name: string;
 }
 
@@ -43,7 +43,7 @@ export const actionCreators = {
         // Only load data if it's something we don't already have (and are not already loading)
         const appState = getState();
         if (appState && appState.project && id !== appState.project.id) {
-            fetch(`Project/Get?id=` + id)
+            fetch(`project/get?id=` + id)
                 .then(response => response.json() as Promise<Project>)
                 .then(data => {
                     dispatch({ type: 'RECEIVE_PROJECT', id: id, project: data });
@@ -57,7 +57,7 @@ export const actionCreators = {
 // ----------------
 // REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
 
-const unloadedState: ProjectState = { id: 0, isLoading: false };
+const unloadedState: ProjectState = { id: 0, isLoading: false, project: { projectId: 0, name: ''} };
 
 export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, incomingAction: Action): ProjectState => {
     if (state === undefined) {

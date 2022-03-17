@@ -68,12 +68,12 @@ namespace TT_Dashboard_Microservice.Models.Views
 
     public class ProjectDto
     {
-        public int ProjectId { get; set; }
-        public string Name { get; set; }
-        public DateTime? Start { get; set; }
-        public DateTime? Completion { get; set; }
-        public string DateDescription { get; set; }
-        public IList<ProjectStartStopDateDto> StartStopDates { get; set; }
+        public int projectId { get; set; }
+        public string name { get; set; }
+        public DateTime? start { get; set; }
+        public DateTime? completion { get; set; }
+        public string dateDescription { get; set; }
+        public IList<ProjectStartStopDateDto> startStopDates { get; set; }
     }
 
     // OLD class

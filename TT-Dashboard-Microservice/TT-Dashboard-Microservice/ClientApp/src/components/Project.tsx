@@ -26,7 +26,6 @@ class FetchData extends React.PureComponent<ProjectProps> {
         return (
             <React.Fragment>
                 <h1 id="tabelLabel">Project</h1>
-                <p>This component demonstrates fetching data from the server and working with URL parameters.</p>
                 {this.renderProject()}
             </React.Fragment>
         );
@@ -38,6 +37,10 @@ class FetchData extends React.PureComponent<ProjectProps> {
     }
 
     private renderProject() {
+        console.info(this.props);
+        if (this.props.isLoading) {
+            return(<div></div>);
+        }
         return (
             <table className='table table-striped' aria-labelledby="tabelLabel">
                 <thead>
@@ -48,8 +51,8 @@ class FetchData extends React.PureComponent<ProjectProps> {
                 </thead>
                 <tbody>
                     <tr>
-                        <td>this.props.project.id</td>
-                        <td>this.props.project.name</td>
+                        <td>{this.props.project.projectId}</td>
+                        <td>{this.props.project.name}</td>
                     </tr>
                 </tbody>
             </table>
