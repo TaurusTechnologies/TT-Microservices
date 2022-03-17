@@ -10,7 +10,7 @@ namespace TT_Dashboard_Microservice.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ProjectController : BaseController
+    public class ProjectController : ControllerBase // TODO: Switch to BaseController after testing.
     {
         private readonly DbContext _context;
 

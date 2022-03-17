@@ -11,7 +11,7 @@ import './custom.css'
 export default () => (
     <Layout>
         <Route exact path='/' component={Home} />
-        <Route exact path='/project' component={Project} />
+        <Route exact path='/project/:id?' component={Project} />
         <Route path='/counter' component={Counter} />
         <Route path='/fetch-data/:startDateIndex?' component={FetchData} />
     </Layout>

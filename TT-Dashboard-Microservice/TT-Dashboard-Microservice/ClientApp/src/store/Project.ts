@@ -42,8 +42,8 @@ export const actionCreators = {
     requestProject: (id: number): AppThunkAction<KnownAction> => (dispatch, getState) => {
         // Only load data if it's something we don't already have (and are not already loading)
         const appState = getState();
-        if (appState && appState.weatherForecasts && id !== appState.weatherForecasts.startDateIndex) {
-            fetch(`project`)
+        if (appState && appState.project && id !== appState.project.id) {
+            fetch(`Project/Get?id=` + id)
                 .then(response => response.json() as Promise<Project>)
                 .then(data => {
                     dispatch({ type: 'RECEIVE_PROJECT', id: id, project: data });
