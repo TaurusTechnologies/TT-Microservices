@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using AuthenticationandAuthorization.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -23,7 +24,7 @@ namespace TT_Dashboard_Microservice.Controllers
         }
 
         /// <summary>
-        ///     Test the string
+        ///     Get the Project object
         /// </summary>
         /// <returns></returns>
         [HttpGet(nameof(Get))]
@@ -42,6 +43,8 @@ namespace TT_Dashboard_Microservice.Controllers
                     .OrderByDescending(x => x.EndDate)
                     .FirstOrDefault();
 
+                var customer = _context.Customers.SingleOrDefault(x => x.CustomerId == project.CustomerId);
+                
                 return new ProjectDto
                 {
                     projectId = project.ProjectId,
@@ -49,6 +52,18 @@ namespace TT_Dashboard_Microservice.Controllers
                     start = start?.StartDate,
                     completion = end?.EndDate,
                     dateDescription = start?.Description,
+                    jobNumber = project.ProjectCode,
+                    poNumber = project.Ponumber,
+                    cellNumber = project.CellPhone,
+                    phoneNumber = project.PhoneNumber,
+                    contactName = project.ContactName,
+                    contactEmail = project.Email,
+
+                    customer = customer != null ? new ProjectCustomerDto
+                    {
+                        customerId = project.CustomerId,
+                        customerName = customer.ContactName,
+                    } : null,
                     startStopDates = _context.ProjectStartStopDates.Where(x => x.ProjectId == project.ProjectId)
                         .Select(x => new ProjectStartStopDateDto
                         {
@@ -56,41 +71,6 @@ namespace TT_Dashboard_Microservice.Controllers
                             Description = x.Description, ProjectStartStopDateId = x.ProjectStartStopDateId
                         }).ToList()
                 };
-
-                //var currentUser = LoggedInUser.CurrentUser.ToViewModel();
-                //currentUser.InProcurementTeam = DataContext.Projects.Any(
-                //            p => p.ProjectId == id && DataContext.Employees.Any(
-                //                e => e.EmployeeId == p.CreatedById && DataContext.TeamMembers.Any(
-                //                    t => t.TeamId == e.PurchaseTeamId && t.EmployeeId == LoggedInUser.CurrentUser.EmployeeId)));
-
-
-                //var vd = new ProjectVD
-                //{
-                //    Project = project,
-                //    //CurrentUser = LoggedInUser.CurrentUser.ToViewModel(),
-                //    StartStopDates = _context.ProjectStartStopDates.Where(x => x.ProjectId == project.ProjectId)
-                //        .ToList()
-                //};
-
-                //if (start != null)
-                //{
-                //    if (start.StartDate != null)
-                //    {
-                //        vd.Start = start.StartDate;
-                //    }
-
-                //    vd.DateDescription = start.Description;
-                //}
-
-                //if (end != null)
-                //{
-                //    if (end.EndDate != null)
-                //    {
-                //        vd.Completion = end.EndDate;
-                //    }
-                //}
-
-                //return vd;
             }
 
             _logger.LogWarning("[Project/Get]: " + id + " not found");
@@ -98,11 +78,76 @@ namespace TT_Dashboard_Microservice.Controllers
         }
 
         [HttpGet("rooms/{id}")]
-        public ProjectRoomsDto GetProjectRooms(int id)
+        public IList<ProjectRoomDto> GetProjectRooms(int id)
         {
-            return new ProjectRoomsDto
+            var projectRooms = _context.ProjectRooms
+                .Where(x => x.ProjectId == id && !x.Room.IsDeleted.Value)
+                .Select(x=>new ProjectRoomDto
+                {
+                    projectRoomId = x.ProjectRoomId,
+                    roomId = x.RoomId,
+                    roomName = x.Room.RoomName,
+                    isActive = x.IsActive??false,
+                })
+                .ToList();
+
+            foreach (var pr in projectRooms)
             {
-            };
+                var products = _context.ProjectProducts
+                    .Where(x => x.ProjectRoomId == pr.projectRoomId && x.SuppliedByOther == false);
+
+                var removed = new List<ProjectProduct>();
+                var received = new List<ProjectProduct>();
+                var ordered = new List<ProjectProduct>();
+                var unOrdered = new List<ProjectProduct>();
+
+                foreach (var product in products)
+                {
+                    if (product.Status == 0)
+                    {
+                        removed.Add(product);
+                    } 
+                    else if (product.ProjectProductReceiveds.Sum(x=>x.QuantityReceived) >= product.Quantity)
+                    {
+                        received.Add(product);
+                    } 
+                    else if (product.OrderedOn.HasValue)
+                    {
+                        ordered.Add(product);
+                    }
+                    else
+                    {
+                        unOrdered.Add(product);
+                    }
+                }
+
+                // Sort them in the proper order.
+                var concat = new List<ProjectProduct>();
+                concat.AddRange(ordered);
+                concat.AddRange(unOrdered);
+                concat.AddRange(received);
+                concat.AddRange(removed);
+
+                pr.products = products.Select( x=>new ProjectProductDto
+                {
+                    projectProductId = x.ProjectProductId,
+                    description = x.Description,
+                    status = x.Status,
+                    quantity = x.Quantity,
+                    binNumber = x.BinNumber,
+                    vendor = x.Vendor,
+                    trackingNumber = x.TrackingNumber,
+                    price = x.Price,
+                    quotePrice = x.QuotePrice,
+                    manufacturer = x.Manufacturer,
+                    partNumber = x.PartNumber,
+                    eta = x.Eta,
+                    poNumber = x.Ponumber,
+                    orderNotes = x.OrderNotes
+                }).ToList();
+            }
+
+            return projectRooms;
         }
     }
 

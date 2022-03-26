@@ -1,6 +1,7 @@
-import * as WeatherForecasts from './WeatherForecasts';
-import * as Counter from './Counter';
+import * as Auth from './Auth';
 import * as Project from './Project';
+import * as Counter from './Counter';
+import * as WeatherForecasts from './WeatherForecasts';
 
 // The top-level state object
 export interface ApplicationState {
@@ -13,6 +14,7 @@ export interface ApplicationState {
 // the reducer with the matching name. It's important that the names match exactly, and that the reducer
 // acts on the corresponding ApplicationState property type.
 export const reducers = {
+    auth: Auth.reducer,
     counter: Counter.reducer,
     project: Project.reducer,
     weatherForecasts: WeatherForecasts.reducer

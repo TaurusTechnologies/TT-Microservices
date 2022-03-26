@@ -18,52 +18,68 @@ namespace TT_Dashboard_Microservice.Models.Views
         public string BinNumber { get; set; }
     }
 
-    public class ProjectRoomDto
+    public class ProductDto
     {
-        public int ProjectRoomId { get; set; }
-        public int RoomId { get; set; }
-        public string RoomName { get; set; }
+
     }
 
-    //public static ProductDto AsDto(this ProjectMCLProduct item, IQueryable<Product> products = null)
-    //{
-    //    Product product = null;
-    //    if (item.Vendor != null && products != null)
-    //    {
-    //        product = products.FirstOrDefault(p => p.ProductId == item.ProductId);
+    public class ProductReceivedDto
+    {
 
-    //    }
+    }
 
-    //    return new ProductDto
-    //    {
-    //        Project = item.Project,
-    //        RoomName = item.ProjectRoom.Room.RoomName,
-    //        ProjectRoom = item.ProjectRoom,
-    //        ProjectRoomId = item.ProjectRoom.ProjectRoomId,
-    //        Description = item.Description,
-    //        PoNumber = item.PONumber,
-    //        PartNumber = item.PartNumber,
-    //        Manufacturer = item.Manufacturer,
-    //        Vendor = product != null ? product.Vendor : "",
-    //        QuotePrice = item.QuotePrice,
-    //        Cost = item.Price,
-    //        Quantity = item.Quantity,
-    //        ProductId = item.ProjectMCLProductId,
-    //        OrderDate = item.OrderedOn,
-    //        OrderedBy = item.Employee,
-    //        ReceivedDate = item.ReceivedOn,
-    //        IsMcl = true,
-    //        Price = item.Price,
-    //        BinNumber = item.BinNumber,
-    //        SuppliedByOther = false,
-    //        Status = item.Status
-    //    };
+    public class EmployeeDto
+    {
 
-    //}
+    }
+
+    public class ProjectProductDto
+    {
+        public int projectProductId { get; set; }
+        public string description { get; set; }
+        public int status { get; set; }
+        public int quantity { get; set; }
+        public string binNumber { get; set; }
+        public string vendor { get; set; }
+        public string trackingNumber { get; set; }
+        public decimal? quotePrice { get; set; }
+        public decimal? price { get; set; }
+        public string manufacturer { get; set; }
+        public string partNumber { get; set; }
+        public DateTime? eta { get; set; }
+        public string poNumber { get; set; }
+        public string orderNotes { get; set; }
+
+    }
+
+    public class ProjectRoomDto
+    {
+        public int projectRoomId { get; set; }
+        public int roomId { get; set; }
+        public string roomName { get; set; }
+        public bool isActive { get; set; }
+
+        public List<ProjectProductDto> products { get; set; }
+    }
 
     public class ProjectRoomsDto
     {
 
+    }
+
+    public class ProjectCustomerDto
+    {
+        public int customerId { get; set; }
+        public string customerName { get; set; }
+    }
+
+    public class ProjectLocationDto
+    {
+        public string address1 { get; set; }
+        public string address2 { get; set; }
+        public string city { get; set; }
+        public string state { get; set; }
+        public string zip { get; set; }
     }
 
     public class ProjectDto
@@ -74,6 +90,17 @@ namespace TT_Dashboard_Microservice.Models.Views
         public DateTime? completion { get; set; }
         public string dateDescription { get; set; }
         public IList<ProjectStartStopDateDto> startStopDates { get; set; }
+        public string jobNumber { get; set; }
+        public string poNumber { get; set; }
+
+        public ProjectCustomerDto customer;
+        public string phoneNumber { get; set; }
+        public string cellNumber { get; set; }
+        public string contactName { get; set; }
+        public string contactEmail { get; set; }
+
+        public ProjectLocationDto installAddress { get; set; }
+        public ProjectLocationDto shippingAddress { get; set; }
     }
 
     // OLD class

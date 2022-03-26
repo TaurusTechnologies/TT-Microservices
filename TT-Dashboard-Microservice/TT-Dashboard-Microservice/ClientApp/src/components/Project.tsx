@@ -25,7 +25,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
     public render() {
         return (
             <React.Fragment>
-                <h1 id="tabelLabel">Project</h1>
+                {/*<h1 id="tabelLabel">Project</h1>*/}
                 {this.renderProject()}
             </React.Fragment>
         );
@@ -42,20 +42,53 @@ class FetchData extends React.PureComponent<ProjectProps> {
             return(<div></div>);
         }
         return (
-            <table className='table table-striped' aria-labelledby="tabelLabel">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Name</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{this.props.project.projectId}</td>
-                        <td>{this.props.project.name}</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div>
+                <h2>{this.props.project.name}</h2>
+
+                {this.props.rooms.map((room: ProjectStore.ProjectRoom) =>
+                    <div>
+                        <h3>{room.roomName}</h3>
+                        <table key={room.projectRoomId} className='table table-striped' aria-labelledby="tabelLabel">
+                            <thead>
+                                <tr>
+                                    <th>Bin</th>
+                                    <th>Qty</th>
+                                    <th>Part Number</th>
+                                    <th>Description</th>
+                                    <th>PO #</th>
+                                    <th>Tracking #</th>
+                                    <th>ETA</th>
+                                    <th>Vendor</th>
+                                    <th>Discount Price</th>
+                                    <th>Cost</th>
+                                    <th>Total</th>
+                                    <th>Notes</th>
+                                    <th>Ordered By</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {room.products.map((product: ProjectStore.ProjectRoomProduct) =>
+                                    <tr key={product.projectProductId}>
+                                        <td>{product.binNumber}</td>
+                                        <td>{product.quantity}</td>
+                                        <td>{product.partNumber}</td>
+                                        <td>{product.description}</td>
+                                        <td>{product.partNumber}</td>
+                                        <td>{product.poNumber}</td>
+                                        <td>{product.eta}</td>
+                                        <td>{product.vendor}</td>
+                                        <td>${product.quotePrice}</td>
+                                        <td>${product.price}</td>
+                                        <td>${(product.price || 0) * product.quantity}</td>
+                                        <td>{product.orderNotes}</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </div>
         );
     }
 }

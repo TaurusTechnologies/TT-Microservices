@@ -8,11 +8,35 @@ export interface ProjectState {
     isLoading: boolean;
     id: number;
     project: Project;
+    rooms: ProjectRoom[];
 }
 
 export interface Project {
     projectId: number;
     name: string;
+}
+
+export interface ProjectRoomProduct {
+    projectProductId: number; 
+    description: string;
+    status: number;
+    quantity: number;
+    binNumber: string;
+    vendor: string;
+    trackingNumber: string;
+    quotePrice?: number;
+    price?: number;
+    manufacturer: string;
+    partNumber: string;
+    poNumber: string;
+    orderNotes: string;
+    eta?: Date;
+}
+
+export interface ProjectRoom {
+    projectRoomId: number;
+    roomName: string;
+    products: ProjectRoomProduct[];
 }
 
 // -----------------
@@ -30,9 +54,21 @@ interface ReceiveProjectAction {
     project: Project;
 }
 
+interface RequestProjectRoomsAction {
+    type: 'REQUEST_PROJECT_ROOMS';
+    id: number;
+}
+
+interface ReceiveProjectRoomsAction {
+    type: 'RECEIVE_PROJECT_ROOMS';
+    id: number;
+    rooms: ProjectRoom[];
+}
+
+
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
-type KnownAction = RequestProjectAction | ReceiveProjectAction;
+type KnownAction = RequestProjectAction | ReceiveProjectAction | ReceiveProjectRoomsAction | RequestProjectRoomsAction;
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
@@ -47,6 +83,11 @@ export const actionCreators = {
                 .then(response => response.json() as Promise<Project>)
                 .then(data => {
                     dispatch({ type: 'RECEIVE_PROJECT', id: id, project: data });
+                    fetch(`project/rooms/` + id)
+                        .then(response => response.json() as Promise<ProjectRoom[]>)
+                        .then(data => {
+                            dispatch({ type: 'RECEIVE_PROJECT_ROOMS', id: id, rooms: data });
+                        });
                 });
 
             dispatch({ type: 'REQUEST_PROJECT', id: id });
@@ -57,7 +98,7 @@ export const actionCreators = {
 // ----------------
 // REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
 
-const unloadedState: ProjectState = { id: 0, isLoading: false, project: { projectId: 0, name: ''} };
+const unloadedState: ProjectState = { id: 0, isLoading: false, project: { projectId: 0, name: ''}, rooms: [] };
 
 export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, incomingAction: Action): ProjectState => {
     if (state === undefined) {
@@ -70,7 +111,8 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
             return {
                 id: action.id,
                 project: state.project,
-                isLoading: true
+                isLoading: true,
+                rooms: state.rooms
             };
         case 'RECEIVE_PROJECT':
             // Only accept the incoming data if it matches the most recent request. This ensures we correctly
@@ -79,7 +121,28 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                 return {
                     id: action.id,
                     project: action.project,
-                    isLoading: false
+                    isLoading: false,
+                    rooms: state.rooms
+                };
+            }
+            break;
+        case 'REQUEST_PROJECT_ROOMS':
+            return {
+                id: action.id,
+                project: state.project,
+                isLoading: true,
+                rooms: state.rooms
+            };
+            break;
+        case 'RECEIVE_PROJECT_ROOMS':
+            // Only accept the incoming data if it matches the most recent request. This ensures we correctly
+            // handle out-of-order responses.
+            if (action.id === state.id) {
+                return {
+                    id: action.id,
+                    project: state.project,
+                    isLoading: false,
+                    rooms: action.rooms
                 };
             }
             break;
