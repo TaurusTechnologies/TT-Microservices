@@ -7,3 +7,8 @@
 /TT-Dashboard-Microservice/.vs/TT-Dashboard-Microservice
 /TT-Dashboard-Microservice/TT-Dashboard-Microservice/obj
 /TT-Dashboard-Microservice/TT-Dashboard-Microservice/bin/Debug/netcoreapp3.1
+/TT-Dashboard-Microservice/TT-Dashboard-Microservice/bin/Release/netcoreapp3.1
+/TT-Dashboard-Microservice/TT-Dashboard-Microservice/ClientApp/build
+/TT-Dashboard-Microservice/TT-Dashboard-Microservice/Properties/PublishProfiles
+/TT-Dashboard-Microservice/TT-Dashboard-Microservice/publish
+/TT-Dashboard-Microservice/TT-Dashboard-Microservice/publish.zip

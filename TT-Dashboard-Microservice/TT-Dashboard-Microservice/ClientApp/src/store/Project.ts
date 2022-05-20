@@ -65,7 +65,6 @@ interface ReceiveProjectRoomsAction {
     rooms: ProjectRoom[];
 }
 
-
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
 type KnownAction = RequestProjectAction | ReceiveProjectAction | ReceiveProjectRoomsAction | RequestProjectRoomsAction;
