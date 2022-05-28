@@ -35,7 +35,7 @@ const AutoSubmitTextInput: React.FC<InputProps> = ({ name, label, value, endpoin
 
     let onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         setValue(e.target.value)
-        await postData('endpoint', { field: name, value: e.target.value});
+        await postData(endpoint, { field: name, value: e.target.value});
     }
 
     return (
@@ -101,11 +101,13 @@ class FetchData extends React.PureComponent<ProjectProps> {
             referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
             body: JSON.stringify(data) // body data type must match "Content-Type" header
         });
+        console.info(response);
         return response.json(); // parses JSON response into native JavaScript objects
     }
 
     private renderProject() {
-        //console.info(this.props);
+        let id = this.props.match.params.id;
+
         if (this.props.isLoading) {
             return(<div></div>);
         }
@@ -151,7 +153,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
                                                 name="description"
                                                 label=""
                                                 value={product.description}
-                                                endpoint="roomdata/10"
+                                                endpoint={"project/projectproduct/" + product.projectProductId + "/field"}
                                             />
                                         </td>
                                         <td>{product.poNumber}</td>
@@ -165,7 +167,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
                                                 name="orderNotes"
                                                 label=""
                                                 value={product.orderNotes}
-                                                endpoint="roomdata/10"
+                                                endpoint={"project/projectproduct/" + product.projectProductId + "/field"}
                                             />
                                         </td>
                                     </tr>

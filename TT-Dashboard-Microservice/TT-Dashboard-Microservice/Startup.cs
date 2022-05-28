@@ -43,7 +43,7 @@ namespace TT_Dashboard_Microservice
             });
 
             // TODO - do not save the connection string here!
-            services.AddDbContext<DbContext>(options => options.UseSqlServer("Data source=ARIZONA;Initial Catalog=PM_PROD;Persist Security Info=True;User ID=PM_DEV;Password=$P4SSw0Rd_2"));
+            services.AddDbContext<DbContext>(options => options.UseSqlServer("Data source=ARIZONA;Initial Catalog=PM_DEV;Persist Security Info=True;User ID=PM_DEV;Password=$P4SSw0Rd_2"));
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

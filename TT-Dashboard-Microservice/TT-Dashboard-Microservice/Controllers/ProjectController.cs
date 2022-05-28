@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AuthenticationandAuthorization.Controllers;
 using Microsoft.AspNetCore.Mvc;
@@ -75,6 +76,50 @@ namespace TT_Dashboard_Microservice.Controllers
 
             _logger.LogWarning("[Project/Get]: " + id + " not found");
             return null;
+        }
+
+        public class ProjectProductFieldUpdateResultDto
+        {
+            public bool success { get; set; }
+            public string msg { get; set; }
+        }
+
+        [HttpPost("projectproduct/{id}/field")]
+        public ProjectProductFieldUpdateResultDto UpdateProjectProductField (int id, ProjectProductFieldUpdateDto dto)
+        {
+            try
+            {
+                 var projectProduct = _context.ProjectProducts
+                    .Single(x => x.ProjectProductId == id);
+
+                // map the fields.
+                switch (dto.field)
+                {
+                    case "ordernotes":
+                        {
+                            projectProduct.OrderNotes = dto.value;
+                            break;
+                        }
+                    case "description":
+                        {
+                            projectProduct.Description = dto.value;
+                            break;
+                        }
+                }
+
+                // update the database.
+                _context.SaveChanges();
+
+                return new ProjectProductFieldUpdateResultDto
+                {
+                    success = true
+                };
+            } 
+            catch (Exception e)
+            {
+                return new ProjectProductFieldUpdateResultDto { success = false, msg = e.Message };
+            }
+
         }
 
         [HttpGet("rooms/{id}")]

@@ -33,6 +33,13 @@ namespace TT_Dashboard_Microservice.Models.Views
 
     }
 
+    public class ProjectProductFieldUpdateDto
+    {
+        public string field { get; set; }
+        public string value { get; set; }
+
+    }
+
     public class ProjectProductDto
     {
         public int projectProductId { get; set; }
