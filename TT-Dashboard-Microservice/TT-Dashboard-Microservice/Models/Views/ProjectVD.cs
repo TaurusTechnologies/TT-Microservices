@@ -42,6 +42,7 @@ namespace TT_Dashboard_Microservice.Models.Views
 
     public class ProjectProductDto
     {
+        public bool received { get; set; }
         public int projectProductId { get; set; }
         public string description { get; set; }
         public int status { get; set; }

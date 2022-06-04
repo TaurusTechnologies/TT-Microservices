@@ -17,6 +17,7 @@ export interface Project {
 }
 
 export interface ProjectRoomProduct {
+    received: boolean;
     projectProductId: number; 
     description: string;
     status: number;

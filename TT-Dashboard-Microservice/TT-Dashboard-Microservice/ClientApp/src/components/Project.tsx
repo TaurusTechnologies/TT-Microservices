@@ -4,44 +4,101 @@ import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { ApplicationState } from '../store';
 import * as ProjectStore from '../store/Project';
+import * as NumericInput from "react-numeric-input";
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+
+interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     name: string;
     label: string;
     value: string;
     endpoint: string;
 }
 
-const AutoSubmitTextInput: React.FC<InputProps> = ({ name, label, value, endpoint, ... rest }) => {
-    const [val, setValue] = React.useState(value);
+interface NumericInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+    name: string;
+    label: string;
+    value: number;
+    endpoint: string;
+}
 
-    let postData = async (url = '', data = {}) => {
-        // Default options are marked with *
-        const response = await fetch(url, {
-            method: 'POST', // *GET, POST, PUT, DELETE, etc.
-            mode: 'cors', // no-cors, *cors, same-origin
-            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-            credentials: 'same-origin', // include, *same-origin, omit
-            headers: {
-                'Content-Type': 'application/json'
-                // 'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            redirect: 'follow', // manual, *follow, error
-            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-            body: JSON.stringify(data) // body data type must match "Content-Type" header
-        });
-        return response.json(); // parses JSON response into native JavaScript objects
-    }
+interface CheckInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+    name: string;
+    label: string;
+    checked: boolean;
+    endpoint: string;
+}
+
+// Shared for all input.
+let postData = async (url = '', data = {}) => {
+    // Default options are marked with *
+    const response = await fetch(url, {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        mode: 'cors', // no-cors, *cors, same-origin
+        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: 'same-origin', // include, *same-origin, omit
+        headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        redirect: 'follow', // manual, *follow, error
+        referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        body: JSON.stringify(data) // body data type must match "Content-Type" header
+    });
+    return response.json(); // parses JSON response into native JavaScript objects
+}
+
+const AutoSubmitCheckedInput: React.FC<CheckInputProps> = ({ name, label, checked, endpoint, ...rest }) => {
+    const [val, setChecked] = React.useState(checked as boolean);
 
     let onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        setValue(e.target.value)
-        await postData(endpoint, { field: name, value: e.target.value});
+        setChecked(!val);
+        await postData(endpoint, { field: name, value: val.toString()});
+    }
+
+    return (
+        <div className="">
+            <label htmlFor={name}>{label}</label>
+            <input
+                onChange={onChange} type="checkbox"
+                id={name} checked={checked}
+                {...rest}></input>
+        </div>
+    );
+}
+
+const AutoSubmitTextInput: React.FC<TextInputProps> = ({ name, label, value, endpoint, ...rest }) => {
+    const [val, setValue] = React.useState(value);
+
+    let onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        setValue(e.target.value);
+        await postData(endpoint, { field: name, value: e.target.value });
     }
 
     return (
         <div className="">
             <label htmlFor={name}>{label}</label>
             <input onChange={onChange} id={name} defaultValue={value} {...rest}></input>
+        </div>
+    );
+}
+
+const AutoSubmitNumericInput: React.FC<NumericInputProps> = ({ name, label, value, endpoint, ...rest }) => {
+    const [val, setValue] = React.useState(value);
+
+    let onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        setValue(parseInt(e.target.value));
+        await postData(endpoint, { field: name, value: e.target.value });
+    }
+
+    return (
+        <div className="">
+            <label htmlFor={name}>{label}</label>
+        {/*    <NumericInput*/}
+        {/*        onChange={onChange}*/}
+        {/*        id={name}*/}
+        {/*        value={value}*/}
+        {/*        min={0}*/}
+        {/*        {...rest} />*/}
         </div>
     );
 }
@@ -112,9 +169,9 @@ class FetchData extends React.PureComponent<ProjectProps> {
             return(<div></div>);
         }
 
-        let updateProjectData = async (data: any) => {
-            return await this.postData('project/rooms', {id: this.props.match.params.id}); // parses JSON response into native JavaScript objects
-        }
+        //let updateProjectData = async (data: any) => {
+        //    return await this.postData('project/rooms', {id: this.props.match.params.id}); // parses JSON response into native JavaScript objects
+        //}
 
         return (
             <div>
@@ -126,6 +183,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
                         <table key={room.projectRoomId} className='table table-striped' aria-labelledby="tabelLabel">
                             <thead>
                                 <tr>
+                                    <th>Rcvd?</th>
                                     <th>Bin</th>
                                     <th>Qty</th>
                                     <th>Part Number</th>
@@ -145,18 +203,30 @@ class FetchData extends React.PureComponent<ProjectProps> {
                             <tbody>
                                 {room.products.map((product: ProjectStore.ProjectRoomProduct) =>
                                     <tr key={product.projectProductId}>
+                                        <td><AutoSubmitCheckedInput
+                                            name="received"
+                                            label=""
+                                            checked={product.received}
+                                            endpoint={"project/projectproduct/" + product.projectProductId + "/field"}/>
+                                        </td>
                                         <td>{product.binNumber}</td>
-                                        <td>{product.quantity}</td>
+                                        <td>
+                                            <AutoSubmitNumericInput
+                                                name="quantity"
+                                                label=""
+                                                value={product.quantity}
+                                                endpoint={"project/projectproduct/" + product.projectProductId + "/field"}/>
+                                        </td>
                                         <td>{product.partNumber}</td>
                                         <td>
                                             <AutoSubmitTextInput
                                                 name="description"
                                                 label=""
                                                 value={product.description}
-                                                endpoint={"project/projectproduct/" + product.projectProductId + "/field"}
-                                            />
+                                                endpoint={"project/projectproduct/" + product.projectProductId + "/field"}/>
                                         </td>
                                         <td>{product.poNumber}</td>
+                                        <td>{product.trackingNumber}</td>
                                         <td>{product.eta}</td>
                                         <td>{product.vendor}</td>
                                         <td>${product.quotePrice}</td>
@@ -167,8 +237,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
                                                 name="orderNotes"
                                                 label=""
                                                 value={product.orderNotes}
-                                                endpoint={"project/projectproduct/" + product.projectProductId + "/field"}
-                                            />
+                                                endpoint={"project/projectproduct/" + product.projectProductId + "/field"}/>
                                         </td>
                                     </tr>
                                 )}

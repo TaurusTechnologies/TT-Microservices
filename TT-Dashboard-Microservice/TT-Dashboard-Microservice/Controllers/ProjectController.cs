@@ -175,6 +175,7 @@ namespace TT_Dashboard_Microservice.Controllers
 
                 pr.products = products.Select( x=>new ProjectProductDto
                 {
+                    received = x.ReceivedOn.HasValue,
                     projectProductId = x.ProjectProductId,
                     description = x.Description,
                     status = x.Status,
