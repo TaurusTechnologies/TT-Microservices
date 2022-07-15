@@ -11,9 +11,51 @@ export interface ProjectState {
     rooms: ProjectRoom[];
 }
 
+export interface ProjectStartStopDates {
+    ProjectStartStopDateId: number;
+    ProjectId: number;
+    StartDate?: Date;
+    EndDate?: Date;
+    Description: string;
+}
+
+export interface ProjectCustomer {
+    customerId: number;
+    name: string;
+}
+
+export interface ProjectLocation {
+    locationName: string;
+    address1: string;
+    address2: string;
+    city: string;
+    state: string;
+    zip: string;
+}
+
 export interface Project {
     projectId: number;
     name: string;
+    start?: Date;
+    completion?: Date;
+    dateDescription?: string;
+    startStopDates?: ProjectStartStopDates[];
+    jobNumber: string;
+    poNumber: string;
+    customer?: ProjectCustomer;
+    phoneNumber: string;
+    faxNumber: string;
+    cellNumber: string;
+    contactName: string;
+    contactEmail: string;
+    installAddress?: ProjectLocation;
+    shippingAddress?: ProjectLocation;
+    billingName: string;
+    billingEmail: string;
+    billingAddress?: ProjectLocation;
+    notes: string;
+    isLegacyServicePlan: boolean;
+
 }
 
 export interface ProjectRoomProduct {
@@ -98,7 +140,16 @@ export const actionCreators = {
 // ----------------
 // REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
 
-const unloadedState: ProjectState = { id: 0, isLoading: false, project: { projectId: 0, name: ''}, rooms: [] };
+const unloadedState: ProjectState = {
+    id: 0, isLoading: false,
+    project: {
+        projectId: 0, name: '', jobNumber: '', poNumber: '', phoneNumber: '',
+        faxNumber: '', cellNumber: '', contactName: '',
+        contactEmail: '', billingEmail: '', billingName: '',
+        notes: '', isLegacyServicePlan: false
+    },
+    rooms: []
+};
 
 export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, incomingAction: Action): ProjectState => {
     if (state === undefined) {

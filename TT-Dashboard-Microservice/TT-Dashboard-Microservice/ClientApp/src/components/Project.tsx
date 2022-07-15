@@ -178,6 +178,21 @@ class FetchData extends React.PureComponent<ProjectProps> {
                 <h2>{this.props.project.name}</h2>
                 <div>
                     <h3>Project Details</h3>
+                    <ul className="">
+                        <li className="bigger">
+                            <b>Customer:</b>
+                        {/*    <a href="/Customer/View/{this.props.project.customer?.customerId}">{this.props.project.customer?.name}</a>*/}
+                        </li>
+                        <li className="bigger"><b>Job Number:</b> { this.props.project.jobNumber }</li>
+                        <li className="bigger"><b>PO Number:</b> {this.props.project.poNumber}</li>
+                    </ul>
+                {/*    <ul class="rightlist">*/}
+                {/*        <li class="bigger"><b>Contact Name:</b> {{ vm.project.ContactName }}</li>*/}
+                {/*        <li> <b>Contact Email:</b> {{ vm.project.Customer ? vm.project.Email : '' }}</li>*/}
+                {/*        <li><b>Phone Number:</b> {{ vm.project.PhoneNumber }}</li>*/}
+                {/*        <li><b>Cell Phone Number:</b> {{ vm.project.CellPhone }}</li>*/}
+
+                {/*    </ul>*/}
 
                 </div>
 

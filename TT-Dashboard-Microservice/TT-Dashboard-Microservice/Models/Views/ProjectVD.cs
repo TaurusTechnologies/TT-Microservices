@@ -30,7 +30,8 @@ namespace TT_Dashboard_Microservice.Models.Views
 
     public class EmployeeDto
     {
-
+        public int employeeId { get; set; }
+        public string fullName { get; set; }
     }
 
     public class ProjectProductFieldUpdateDto
@@ -78,7 +79,7 @@ namespace TT_Dashboard_Microservice.Models.Views
     public class ProjectCustomerDto
     {
         public int customerId { get; set; }
-        public string customerName { get; set; }
+        public string name { get; set; }
     }
 
     public class ProjectLocationDto
@@ -109,15 +110,15 @@ namespace TT_Dashboard_Microservice.Models.Views
         public string jobNumber { get; set; }
         public string poNumber { get; set; }
 
-        public ProjectCustomerDto customer;
+        public ProjectCustomerDto? customer;
         public string phoneNumber { get; set; }
         public string faxNumber { get; set; }
         public string cellNumber { get; set; }
         public string contactName { get; set; }
         public string contactEmail { get; set; }
 
-        public ProjectLocationDto installAddress { get; set; }
-        public ProjectLocationDto shippingAddress { get; set; }
+        public ProjectLocationDto? installAddress { get; set; }
+        public ProjectLocationDto? shippingAddress { get; set; }
         public string billingName { get; set; }
         public string billingEmail { get; set; }
 
@@ -133,6 +134,7 @@ namespace TT_Dashboard_Microservice.Models.Views
         public decimal? laborActual { get; set; }
         public decimal? productBudget { get; set; }
         public decimal? productActual { get; set; }
+        public EmployeeDto leadTech { get; set; }
 
         /*             <div class="ng-hide" ng-hide="vm.isProjectDetailsHidden" style="padding: 0px">
                        <ul class="singleList">

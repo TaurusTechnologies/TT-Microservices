@@ -132,7 +132,7 @@ namespace TT_Dashboard_Microservice.Controllers
                     customer = customer != null ? new ProjectCustomerDto
                     {
                         customerId = project.CustomerId,
-                        customerName = customer.ContactName,
+                        name = customer.ContactName,
                     } : null,
 
                     notes = project.Notes,
@@ -154,7 +154,13 @@ namespace TT_Dashboard_Microservice.Controllers
                     expenseBudget = project.ExpenseBudget,
                     codingBudget = project.CodingBudget,
                     codingActual = codingTotal,
-                    productBudget = project.ProductBudget
+                    productBudget = project.ProductBudget,
+
+                    leadTech = project.LeadTechnicianId.HasValue ? new EmployeeDto
+                    {
+                        employeeId = project.LeadTechnicianId.Value,
+                        fullName = project.LeadTechnician.FullName
+                    } : null
                 };
             }
 
