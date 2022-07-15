@@ -176,6 +176,10 @@ class FetchData extends React.PureComponent<ProjectProps> {
         return (
             <div>
                 <h2>{this.props.project.name}</h2>
+                <div>
+                    <h3>Project Details</h3>
+
+                </div>
 
                 {this.props.rooms.map((room: ProjectStore.ProjectRoom) =>
                     <div>

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using TT_Dashboard_Microservice.Models;
 using TT_Dashboard_Microservice.Models.Dtos;
 using TT_Dashboard_Microservice.Models.Views;
+using TT_Dashboard_Microservice.Models.Enums;
 
 namespace TT_Dashboard_Microservice.Controllers
 {
@@ -22,6 +23,26 @@ namespace TT_Dashboard_Microservice.Controllers
         {
             _logger = logger;
             _context = context;
+        }
+
+        private decimal CalculateAmountInvoiced (string projectCode)
+        {
+            return _context.Qbinvoices.Where(x => x.Other == projectCode).Sum(x=>x.Total??0m);
+        }
+
+        private decimal CalculateAmountOutstanding (string projectCode)
+        {
+            return _context.Qbinvoices.Where(x => x.Other == projectCode).Sum(x => x.BalanceRemaining??0m);
+        }
+
+        public decimal? CalculateProductActualByProjectId(int projectId)
+        {
+            var productactual =
+                _context.ProjectProducts.Where(
+                    pp => pp.ProjectId == projectId && pp.OrderedByEmployeeId.HasValue && pp.Status == 1).Sum(pp => pp.Total) ?? 0.0m +
+                    _context.ProjectMclproducts.Where(pp => pp.ProjectId == projectId && pp.OrderedByEmployeeId.HasValue).Sum(pp => pp.Total) ?? 0.0m;
+
+            return productactual;
         }
 
         /// <summary>
@@ -45,7 +66,22 @@ namespace TT_Dashboard_Microservice.Controllers
                     .FirstOrDefault();
 
                 var customer = _context.Customers.SingleOrDefault(x => x.CustomerId == project.CustomerId);
-                
+
+                var leadQuoteRevision = _context.LeadQuoteRevisions.SingleOrDefault(x => x.LeadQuoteRevisionId == project.FromQuoteRevisionId);
+                var leadQuote = _context.LeadQuotes.SingleOrDefault(x => x.LeadQuoteId == leadQuoteRevision.LeadQuoteId);
+
+                decimal? laborTotal =
+                    _context.TimeLogs.Where(
+                        t => t.Activity.BillingType != null && (t.Activity.BillingType == (int)BillingType.Labor))
+                        .Select(tl => tl.Hours * tl.Activity.BillableRate)
+                        .Sum();
+
+                decimal? codingTotal =
+                    _context.TimeLogs.Where(
+                        x => x.Activity.BillingType != null && (x.Activity.BillingType == (int)BillingType.Programming))
+                        .Select(xl => xl.Hours * xl.Activity.BillableRate)
+                        .Sum();
+
                 return new ProjectDto
                 {
                     projectId = project.ProjectId,
@@ -57,20 +93,68 @@ namespace TT_Dashboard_Microservice.Controllers
                     poNumber = project.Ponumber,
                     cellNumber = project.CellPhone,
                     phoneNumber = project.PhoneNumber,
+                    faxNumber = project.FaxNumber,
                     contactName = project.ContactName,
                     contactEmail = project.Email,
+                    isLegacyServicePlan = project.LegacyServicePlan??true,
+
+                    installAddress = new ProjectLocationDto
+                    {
+                        address1 = project.Address1,
+                        address2 = project.Address2,
+                        city = project.City,
+                        state = project.State,
+                        zip = project.Zip
+                    },
+
+                    shippingAddress = new ProjectLocationDto
+                    {
+                        locationName = leadQuote.ShippingLocationName,
+                        address1 = leadQuote.ShippingAddress1,
+                        address2 = leadQuote.ShippingAddress2,
+                        city = leadQuote.ShippingCity,
+                        state = leadQuote.ShippingState,
+                        zip = leadQuote.ShippingZip
+                    },
+
+                    billingName = customer.BillingContactName,
+                    billingEmail = customer.BillingEmail,
+
+                    billingAddress = new ProjectLocationDto
+                    {
+                        address1 = leadQuote.BillingAddress1,
+                        address2 = leadQuote.BillingAddress2,
+                        city = leadQuote.BillingCity,
+                        state = leadQuote.BillingState,
+                        zip = leadQuote.BillingZip
+                    },
 
                     customer = customer != null ? new ProjectCustomerDto
                     {
                         customerId = project.CustomerId,
                         customerName = customer.ContactName,
                     } : null,
+
+                    notes = project.Notes,
+
                     startStopDates = _context.ProjectStartStopDates.Where(x => x.ProjectId == project.ProjectId)
                         .Select(x => new ProjectStartStopDateDto
                         {
                             ProjectId = x.ProjectId, StartDate = x.StartDate, EndDate = x.EndDate,
                             Description = x.Description, ProjectStartStopDateId = x.ProjectStartStopDateId
-                        }).ToList()
+                        }).ToList(),
+
+                    metrics = new ProjectMetricsDto
+                    {
+
+                    },
+
+                    laborBudget = project.LaborBudget,
+                    laborActual = laborTotal,
+                    expenseBudget = project.ExpenseBudget,
+                    codingBudget = project.CodingBudget,
+                    codingActual = codingTotal,
+                    productBudget = project.ProductBudget
                 };
             }
 
