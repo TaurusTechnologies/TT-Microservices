@@ -35,7 +35,7 @@ namespace TT_Dashboard_Microservice.Controllers
             return _context.Qbinvoices.Where(x => x.Other == projectCode).Sum(x => x.BalanceRemaining??0m);
         }
 
-        public decimal? CalculateProductActualByProjectId(int projectId)
+        private decimal? CalculateProductActualByProjectId(int projectId)
         {
             var productactual =
                 _context.ProjectProducts.Where(
@@ -82,7 +82,9 @@ namespace TT_Dashboard_Microservice.Controllers
                         .Select(xl => xl.Hours * xl.Activity.BillableRate)
                         .Sum();
 
-                return new ProjectDto
+                var leadTechnician = _context.Employees.SingleOrDefault(x=>x.EmployeeId == project.LeadTechnicianId);
+
+                var dto = new ProjectDto
                 {
                     projectId = project.ProjectId,
                     name = project.Name,
@@ -129,11 +131,11 @@ namespace TT_Dashboard_Microservice.Controllers
                         zip = leadQuote.BillingZip
                     },
 
-                    customer = customer != null ? new ProjectCustomerDto
+                    customer = new ProjectCustomerDto
                     {
                         customerId = project.CustomerId,
-                        name = customer.ContactName,
-                    } : null,
+                        name = customer != null ? customer.ContactName : "",
+                    },
 
                     notes = project.Notes,
 
@@ -159,9 +161,12 @@ namespace TT_Dashboard_Microservice.Controllers
                     leadTech = project.LeadTechnicianId.HasValue ? new EmployeeDto
                     {
                         employeeId = project.LeadTechnicianId.Value,
-                        fullName = project.LeadTechnician.FullName
+                        fullName = leadTechnician.FullName
                     } : null
                 };
+
+                
+                return dto;
             }
 
             _logger.LogWarning("[Project/Get]: " + id + " not found");
@@ -212,7 +217,54 @@ namespace TT_Dashboard_Microservice.Controllers
 
         }
 
-        [HttpGet("rooms/{id}")]
+        private static string DisplayName (Employee e)
+        {
+            return e.IsActive ? e.FullName : string.Format("{0} (Inactive)", e.FullName);
+
+        }
+
+        [HttpGet("comments/{id}")]
+        public IList<ItemHistoryDto> GetProjectComments(int id)
+        {
+            var p = _context.Projects.SingleOrDefault(l => l.ProjectId == id);
+            if (p != null)
+            {
+                var itemComments = _context.ItemComments.Where(x => x.ProjectId == id);
+                var itemFiles = _context.ItemFiles.Where(x => x.ProjectId == id);
+
+                var histories =
+                    itemComments.Select(
+                        ic =>
+                        new ItemHistoryDto
+                        {
+                            Author = DisplayName(ic.Employee),
+                            AuthorId = ic.EmployeeId,
+                            id = ic.ItemCommentId,
+                            Message = ic.Message,
+                            Timestamp = ic.Timestamp.ToString(),
+                            Type = ic.Type
+                        }).AsEnumerable();
+
+                histories = histories.Union(
+                    itemFiles.Select(
+                        iff =>
+                        new ItemHistoryDto
+                        {
+                            Author = DisplayName(iff.Employee),
+                            AuthorId = iff.EmployeeId,
+                            id = iff.ItemFileId,
+                            Message = string.Format("{0} Uploaded", iff.Name),
+                            Timestamp = iff.Timestamp.ToString(),
+                            Type = (int)ItemHistoryType.FileUpload
+                        })).OrderByDescending(t => t.Timestamp);
+ 
+                return histories.ToList();
+            }
+            return null;
+    }
+
+
+    [HttpGet("rooms/{id}")]
         public IList<ProjectRoomDto> GetProjectRooms(int id)
         {
             var projectRooms = _context.ProjectRooms

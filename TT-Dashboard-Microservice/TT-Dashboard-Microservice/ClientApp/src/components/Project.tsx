@@ -169,13 +169,15 @@ class FetchData extends React.PureComponent<ProjectProps> {
             return(<div></div>);
         }
 
+        let customerName = this.props.project.customer == null ? "" : this.props.project.customer.name;
+
         //let updateProjectData = async (data: any) => {
         //    return await this.postData('project/rooms', {id: this.props.match.params.id}); // parses JSON response into native JavaScript objects
         //}
 
         return (
             <div>
-                <h2>{this.props.project.name}</h2>
+                <h2>{customerName} - {this.props.project.name}</h2>
                 <div>
                     <h3>Project Details</h3>
                     <ul className="">
