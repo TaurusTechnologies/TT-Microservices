@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { ApplicationState } from '../store';
 import * as ProjectStore from '../store/Project';
 import * as NumericInput from "react-numeric-input";
+import { ItemHistoryDto, ProjectProductDto, ProjectRoomDto } from '../apiClient/data-contracts';
 
 
 interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -175,7 +176,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
             return (
                 <div>
                     <ul>
-                        {this.props.itemHistory.map((item: ProjectStore.ItemHistory) =>
+                        {this.props.itemHistory.map((item: ItemHistoryDto) =>
                             <li key={item.id}>
                                 {item.message}
                             </li>
@@ -211,7 +212,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
 
                 </div>
 
-                {this.props.rooms.map((room: ProjectStore.ProjectRoom) =>
+                {this.props.rooms.map((room: ProjectRoomDto) =>
                     <div>
                         <h3>{room.roomName}</h3>
                         <table key={room.projectRoomId} className='table table-striped' aria-labelledby="tabelLabel">
@@ -235,12 +236,12 @@ class FetchData extends React.PureComponent<ProjectProps> {
                                 </tr>
                             </thead>
                             <tbody>
-                                {room.products.map((product: ProjectStore.ProjectRoomProduct) =>
+                                {room.products!.map((product: ProjectProductDto) =>
                                     <tr key={product.projectProductId}>
                                         <td><AutoSubmitCheckedInput
                                             name="received"
                                             label=""
-                                            checked={product.received}
+                                            checked={product.received!}
                                             endpoint={"project/projectproduct/" + product.projectProductId + "/field"}/>
                                         </td>
                                         <td>{product.binNumber}</td>
@@ -248,7 +249,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
                                             <AutoSubmitNumericInput
                                                 name="quantity"
                                                 label=""
-                                                value={product.quantity}
+                                                value={product.quantity!}
                                                 endpoint={"project/projectproduct/" + product.projectProductId + "/field"}/>
                                         </td>
                                         <td>{product.partNumber}</td>
@@ -256,7 +257,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
                                             <AutoSubmitTextInput
                                                 name="description"
                                                 label=""
-                                                value={product.description}
+                                                value={product.description!}
                                                 endpoint={"project/projectproduct/" + product.projectProductId + "/field"}/>
                                         </td>
                                         <td>{product.poNumber}</td>
@@ -265,21 +266,21 @@ class FetchData extends React.PureComponent<ProjectProps> {
                                         <td>{product.vendor}</td>
                                         <td>${product.quotePrice}</td>
                                         <td>${product.price}</td>
-                                        <td>${(product.price || 0) * product.quantity}</td>
+                                        <td>${(product.price || 0) * product.quantity!}</td>
                                         <td>
                                             <AutoSubmitTextInput
                                                 name="orderNotes"
                                                 label=""
-                                                value={product.orderNotes}
+                                                value={product.orderNotes!}
                                                 endpoint={"project/projectproduct/" + product.projectProductId + "/field"}/>
                                         </td>
                                     </tr>
                                 )}
                             </tbody>
                         </table>
-                        {renderItemHistory()}
                     </div>
                 )}
+                {renderItemHistory()}
             </div>
         );
     }

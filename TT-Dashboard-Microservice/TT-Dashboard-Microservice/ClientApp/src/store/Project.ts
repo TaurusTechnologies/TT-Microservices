@@ -1,5 +1,7 @@
 import { Action, Reducer } from 'redux';
 import { AppThunkAction } from '.';
+import { ItemHistoryDto, ProjectDto, ProjectRoomDto } from '../apiClient/data-contracts';
+import { Project as ProjectApi } from '../apiClient/Project';
 
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.
@@ -7,89 +9,9 @@ import { AppThunkAction } from '.';
 export interface ProjectState {
     isLoading: boolean;
     id: number;
-    project: Project;
-    rooms: ProjectRoom[];
-    itemHistory: ItemHistory[];
-}
-
-export interface ProjectStartStopDates {
-    ProjectStartStopDateId: number;
-    ProjectId: number;
-    StartDate?: Date;
-    EndDate?: Date;
-    Description: string;
-}
-
-export interface ProjectCustomer {
-    customerId: number;
-    name: string;
-}
-
-export interface ProjectLocation {
-    locationName: string;
-    address1: string;
-    address2: string;
-    city: string;
-    state: string;
-    zip: string;
-}
-
-export interface Project {
-    projectId: number;
-    name: string;
-    start?: Date;
-    completion?: Date;
-    dateDescription?: string;
-    startStopDates?: ProjectStartStopDates[];
-    jobNumber: string;
-    poNumber: string;
-    customer?: ProjectCustomer;
-    phoneNumber: string;
-    faxNumber: string;
-    cellNumber: string;
-    contactName: string;
-    contactEmail: string;
-    installAddress?: ProjectLocation;
-    shippingAddress?: ProjectLocation;
-    billingName: string;
-    billingEmail: string;
-    billingAddress?: ProjectLocation;
-    notes: string;
-    isLegacyServicePlan: boolean;
-
-}
-
-export interface ProjectRoomProduct {
-    received: boolean;
-    projectProductId: number; 
-    description: string;
-    status: number;
-    quantity: number;
-    binNumber: string;
-    vendor: string;
-    trackingNumber: string;
-    quotePrice?: number;
-    price?: number;
-    manufacturer: string;
-    partNumber: string;
-    poNumber: string;
-    orderNotes: string;
-    eta?: Date;
-}
-
-export interface ProjectRoom {
-    projectRoomId: number;
-    roomName: string;
-    products: ProjectRoomProduct[];
-}
-
-export interface ItemHistory {
-    id: number;
-    type: number;
-    message: string;
-    author: string;
-    authorId: number;
-    timeStamp: string;
+    project: ProjectDto;
+    rooms: ProjectRoomDto[];
+    itemHistory: ItemHistoryDto[];
 }
 
 // -----------------
@@ -104,7 +26,7 @@ interface RequestProjectAction {
 interface ReceiveProjectAction {
     type: 'RECEIVE_PROJECT';
     id: number;
-    project: Project;
+    project: ProjectDto;
 }
 
 interface RequestProjectRoomsAction {
@@ -115,7 +37,7 @@ interface RequestProjectRoomsAction {
 interface ReceiveProjectRoomsAction {
     type: 'RECEIVE_PROJECT_ROOMS';
     id: number;
-    rooms: ProjectRoom[];
+    rooms: ProjectRoomDto[];
 }
 
 
@@ -127,7 +49,7 @@ interface RequestItemHistoryAction {
 interface ReceiveItemHistoryAction {
     type: 'RECEIVE_ITEM_HISTORY';
     id: number;
-    itemHistory: ItemHistory[];
+    itemHistory: ItemHistoryDto[];
 }
 
 
@@ -142,25 +64,21 @@ type KnownAction = RequestProjectAction | ReceiveProjectAction | ReceiveProjectR
 
 export const actionCreators = {
     requestProject: (id: number): AppThunkAction<KnownAction> => (dispatch, getState) => {
+
         // Only load data if it's something we don't already have (and are not already loading)
         const appState = getState();
         if (appState && appState.project && id !== appState.project.id) {
-            fetch(`project/get?id=` + id)
-                .then(response => response.json() as Promise<Project>)
-                .then(data => {
-                    dispatch({ type: 'RECEIVE_PROJECT', id: id, project: data });
-                    fetch(`project/rooms/` + id)
-                        .then(response => response.json() as Promise<ProjectRoom[]>)
-                        .then(data => {
-                            dispatch({ type: 'RECEIVE_PROJECT_ROOMS', id: id, rooms: data });
-                            fetch(`project/itemhistory` + id)
-                                .then(response => response.json() as Promise<ItemHistory[]>)
-                                .then(data => {
-                                    dispatch({ type: 'RECEIVE_ITEM_HISTORY', id: id, itemHistory: data });
-                                    fetch(`project/itemhistory` + id)
-                                });
 
-                        });
+            const api = new ProjectApi();
+            api.getProject({ id: id })
+                .then(response => {
+                    dispatch({ type: 'RECEIVE_PROJECT', id: id, project: response.data });
+                    api.roomsDetail(id).then(response => {
+                        dispatch({ type: 'RECEIVE_PROJECT_ROOMS', id: id, rooms: response.data });
+                        api.itemhistoryDetail(id).then(response => {
+                            dispatch({ type: 'RECEIVE_ITEM_HISTORY', id: id, itemHistory: response.data });
+                        })
+                    })
                 });
 
             dispatch({ type: 'REQUEST_PROJECT', id: id });
