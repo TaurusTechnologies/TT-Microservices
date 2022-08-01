@@ -223,7 +223,7 @@ namespace TT_Dashboard_Microservice.Controllers
 
         }
 
-        [HttpGet("comments/{id}")]
+        [HttpGet("itemhistory/{id}")]
         public IList<ItemHistoryDto> GetProjectComments(int id)
         {
             var p = _context.Projects.SingleOrDefault(l => l.ProjectId == id);
@@ -237,12 +237,12 @@ namespace TT_Dashboard_Microservice.Controllers
                         ic =>
                         new ItemHistoryDto
                         {
-                            Author = DisplayName(ic.Employee),
-                            AuthorId = ic.EmployeeId,
+                            author = DisplayName(ic.Employee),
+                            authorId = ic.EmployeeId,
                             id = ic.ItemCommentId,
-                            Message = ic.Message,
-                            Timestamp = ic.Timestamp.ToString(),
-                            Type = ic.Type
+                            message = ic.Message,
+                            timeStamp = ic.Timestamp.ToString(),
+                            type = ic.Type
                         }).AsEnumerable();
 
                 histories = histories.Union(
@@ -250,13 +250,13 @@ namespace TT_Dashboard_Microservice.Controllers
                         iff =>
                         new ItemHistoryDto
                         {
-                            Author = DisplayName(iff.Employee),
-                            AuthorId = iff.EmployeeId,
+                            author = DisplayName(iff.Employee),
+                            authorId = iff.EmployeeId,
                             id = iff.ItemFileId,
-                            Message = string.Format("{0} Uploaded", iff.Name),
-                            Timestamp = iff.Timestamp.ToString(),
-                            Type = (int)ItemHistoryType.FileUpload
-                        })).OrderByDescending(t => t.Timestamp);
+                            message = string.Format("{0} Uploaded", iff.Name),
+                            timeStamp = iff.Timestamp.ToString(),
+                            type = (int)ItemHistoryType.FileUpload
+                        })).OrderByDescending(t => t.timeStamp);
  
                 return histories.ToList();
             }

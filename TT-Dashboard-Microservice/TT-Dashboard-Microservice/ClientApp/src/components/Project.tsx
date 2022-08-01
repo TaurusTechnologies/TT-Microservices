@@ -171,6 +171,19 @@ class FetchData extends React.PureComponent<ProjectProps> {
 
         let customerName = this.props.project.customer == null ? "" : this.props.project.customer.name;
 
+        let renderItemHistory = () => {
+            return (
+                <div>
+                    <ul>
+                        {this.props.itemHistory.map((item: ProjectStore.ItemHistory) =>
+                            <li key={item.id}>
+                                {item.message}
+                            </li>
+                    )}
+                    </ul>
+                 </div>);
+        }
+
         //let updateProjectData = async (data: any) => {
         //    return await this.postData('project/rooms', {id: this.props.match.params.id}); // parses JSON response into native JavaScript objects
         //}
@@ -264,6 +277,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
                                 )}
                             </tbody>
                         </table>
+                        {renderItemHistory()}
                     </div>
                 )}
             </div>

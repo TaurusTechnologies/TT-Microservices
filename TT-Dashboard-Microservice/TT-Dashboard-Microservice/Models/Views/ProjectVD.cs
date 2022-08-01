@@ -96,12 +96,12 @@ namespace TT_Dashboard_Microservice.Models.Views
 
     public class ItemHistoryDto
     {
-        public int Type { get; set; }
-        public string Message { get; set; }
-        public string Author { get; set; }
-        public int AuthorId { get; set; }
-        public string Timestamp { get; set; }
         public int id { get; set; }
+        public int type { get; set; }
+        public string message { get; set; }
+        public string author { get; set; }
+        public int authorId { get; set; }
+        public string timeStamp { get; set; }
     }
 
     public class ProjectDto

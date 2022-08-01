@@ -9,6 +9,7 @@ export interface ProjectState {
     id: number;
     project: Project;
     rooms: ProjectRoom[];
+    itemHistory: ItemHistory[];
 }
 
 export interface ProjectStartStopDates {
@@ -82,6 +83,15 @@ export interface ProjectRoom {
     products: ProjectRoomProduct[];
 }
 
+export interface ItemHistory {
+    id: number;
+    type: number;
+    message: string;
+    author: string;
+    authorId: number;
+    timeStamp: string;
+}
+
 // -----------------
 // ACTIONS - These are serializable (hence replayable) descriptions of state transitions.
 // They do not themselves have any side-effects; they just describe something that is going to happen.
@@ -108,9 +118,23 @@ interface ReceiveProjectRoomsAction {
     rooms: ProjectRoom[];
 }
 
+
+interface RequestItemHistoryAction {
+    type: 'REQUEST_ITEM_HISTORY';
+    id: number;
+}
+
+interface ReceiveItemHistoryAction {
+    type: 'RECEIVE_ITEM_HISTORY';
+    id: number;
+    itemHistory: ItemHistory[];
+}
+
+
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
-type KnownAction = RequestProjectAction | ReceiveProjectAction | ReceiveProjectRoomsAction | RequestProjectRoomsAction;
+type KnownAction = RequestProjectAction | ReceiveProjectAction | ReceiveProjectRoomsAction | RequestProjectRoomsAction
+    | ReceiveItemHistoryAction | RequestItemHistoryAction;
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
@@ -129,6 +153,13 @@ export const actionCreators = {
                         .then(response => response.json() as Promise<ProjectRoom[]>)
                         .then(data => {
                             dispatch({ type: 'RECEIVE_PROJECT_ROOMS', id: id, rooms: data });
+                            fetch(`project/itemhistory` + id)
+                                .then(response => response.json() as Promise<ItemHistory[]>)
+                                .then(data => {
+                                    dispatch({ type: 'RECEIVE_ITEM_HISTORY', id: id, itemHistory: data });
+                                    fetch(`project/itemhistory` + id)
+                                });
+
                         });
                 });
 
@@ -148,6 +179,7 @@ const unloadedState: ProjectState = {
         contactEmail: '', billingEmail: '', billingName: '',
         notes: '', isLegacyServicePlan: false
     },
+    itemHistory: [],
     rooms: []
 };
 
@@ -163,7 +195,8 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                 id: action.id,
                 project: state.project,
                 isLoading: true,
-                rooms: state.rooms
+                rooms: state.rooms,
+                itemHistory: state.itemHistory
             };
         case 'RECEIVE_PROJECT':
             // Only accept the incoming data if it matches the most recent request. This ensures we correctly
@@ -173,7 +206,8 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                     id: action.id,
                     project: action.project,
                     isLoading: false,
-                    rooms: state.rooms
+                    rooms: state.rooms,
+                    itemHistory: state.itemHistory
                 };
             }
             break;
@@ -182,9 +216,9 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                 id: action.id,
                 project: state.project,
                 isLoading: true,
-                rooms: state.rooms
+                rooms: state.rooms,
+                itemHistory: state.itemHistory
             };
-            break;
         case 'RECEIVE_PROJECT_ROOMS':
             // Only accept the incoming data if it matches the most recent request. This ensures we correctly
             // handle out-of-order responses.
@@ -193,7 +227,29 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                     id: action.id,
                     project: state.project,
                     isLoading: false,
-                    rooms: action.rooms
+                    rooms: action.rooms,
+                    itemHistory: state.itemHistory
+                };
+            }
+            break;
+        case 'REQUEST_ITEM_HISTORY':
+            return {
+                id: action.id,
+                project: state.project,
+                isLoading: true,
+                rooms: state.rooms,
+                itemHistory: state.itemHistory
+            };
+        case 'RECEIVE_ITEM_HISTORY':
+            // Only accept the incoming data if it matches the most recent request. This ensures we correctly
+            // handle out-of-order responses.
+            if (action.id === state.id) {
+                return {
+                    id: action.id,
+                    project: state.project,
+                    isLoading: false,
+                    rooms: state.rooms,
+                    itemHistory: action.itemHistory
                 };
             }
             break;

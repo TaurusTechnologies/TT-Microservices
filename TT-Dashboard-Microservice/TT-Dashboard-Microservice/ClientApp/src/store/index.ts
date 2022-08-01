@@ -1,12 +1,10 @@
 import * as Auth from './Auth';
 import * as Project from './Project';
 import * as Counter from './Counter';
-import * as WeatherForecasts from './WeatherForecasts';
 
 // The top-level state object
 export interface ApplicationState {
     counter: Counter.CounterState | undefined;
-    weatherForecasts: WeatherForecasts.WeatherForecastsState | undefined;
     project: Project.ProjectState | undefined;
 }
 
@@ -16,8 +14,7 @@ export interface ApplicationState {
 export const reducers = {
     auth: Auth.reducer,
     counter: Counter.reducer,
-    project: Project.reducer,
-    weatherForecasts: WeatherForecasts.reducer
+    project: Project.reducer
 };
 
 // This type can be used as a hint on action creators so that its 'dispatch' and 'getState' params are
