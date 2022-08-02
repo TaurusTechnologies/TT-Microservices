@@ -128,6 +128,14 @@ export interface ProjectLocationDto {
 }
 
 export interface ProjectMetricsDto {
+  hasServicePlan?: boolean;
+  servicePlan?: string | null;
+  leadTechnician?: string | null;
+  programmer?: string | null;
+
+  /** @format double */
+  quote?: number;
+
   /** @format double */
   amountInvoiced?: number;
 
@@ -203,4 +211,12 @@ export interface ProjectStartStopDateDto {
   /** @format date-time */
   endDate?: string | null;
   description?: string | null;
+}
+
+export interface ServicePlanDto {
+  /** @format int32 */
+  id?: number;
+  provider?: string | null;
+  plan?: string | null;
+  expiration?: string | null;
 }

@@ -230,7 +230,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/InvoiceDto"
+                    "$ref": "#/components/schemas/ServicePlanDto"
                   }
                 }
               },
@@ -238,7 +238,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/InvoiceDto"
+                    "$ref": "#/components/schemas/ServicePlanDto"
                   }
                 }
               },
@@ -246,7 +246,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/InvoiceDto"
+                    "$ref": "#/components/schemas/ServicePlanDto"
                   }
                 }
               }
@@ -709,6 +709,25 @@
       "ProjectMetricsDto": {
         "type": "object",
         "properties": {
+          "hasServicePlan": {
+            "type": "boolean"
+          },
+          "servicePlan": {
+            "type": "string",
+            "nullable": true
+          },
+          "leadTechnician": {
+            "type": "string",
+            "nullable": true
+          },
+          "programmer": {
+            "type": "string",
+            "nullable": true
+          },
+          "quote": {
+            "type": "number",
+            "format": "double"
+          },
           "amountInvoiced": {
             "type": "number",
             "format": "double"
@@ -873,6 +892,28 @@
             "nullable": true
           },
           "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ServicePlanDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "provider": {
+            "type": "string",
+            "nullable": true
+          },
+          "plan": {
+            "type": "string",
+            "nullable": true
+          },
+          "expiration": {
             "type": "string",
             "nullable": true
           }

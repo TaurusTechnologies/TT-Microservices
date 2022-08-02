@@ -45,6 +45,36 @@ namespace TT_Dashboard_Microservice.Controllers
             return productactual;
         }
 
+        private ProjectDto FillInMetrics (ProjectDto p)
+        {
+            var project = _context.Projects.SingleOrDefault(x => x.ProjectId == p.projectId);
+            var accountingStatus = _context.ProjectAccountingStatuses.SingleOrDefault(x => x.AccountingStatusId == project.AccountingStatusId);
+            var servicePlan = project.ServicePlanId.HasValue ? _context.ServicePlans.SingleOrDefault(x => x.ServicePlanId == project.ServicePlanId) : null;
+            var leadTechnician = _context.Employees.SingleOrDefault(x => x.EmployeeId == project.LeadTechnicianId);
+            var programmer = _context.Employees.SingleOrDefault(x => x.EmployeeId == project.ProgrammerTechnicianId);
+            var leadQuoteRevision = _context.LeadQuoteRevisions.SingleOrDefault(x => x.LeadQuoteRevisionId == project.FromQuoteRevisionId);
+            var revisionRooms = _context.RevisionRooms.Where(x => x.LeadQuoteRevisionId == leadQuoteRevision.LeadQuoteRevisionId);
+            var roomTotals = leadQuoteRevision != null
+                ? revisionRooms.Where(x => x.Purchased).Sum(x => x.RoomTotals ?? 0)
+                : 0.0m;
+
+
+            p.metrics = new ProjectMetricsDto
+            {
+                accountingStatus = accountingStatus.Description,
+                hasServicePlan = p.isLegacyServicePlan,
+                servicePlan = servicePlan != null ? servicePlan.Name : "",  
+                leadTechnician = leadTechnician != null ? leadTechnician.FullName : "",
+                programmer = programmer != null ? programmer.FullName : "",
+                quote = roomTotals,
+
+                amountInvoiced = CalculateAmountInvoiced(project.ProjectCode),
+                amountOutstanding = CalculateAmountOutstanding(project.ProjectCode),
+            };
+
+            return p;
+        }
+
         /// <summary>
         ///     Get the Project object
         /// </summary>
@@ -83,7 +113,6 @@ namespace TT_Dashboard_Microservice.Controllers
                         .Sum();
 
                 var leadTechnician = _context.Employees.SingleOrDefault(x=>x.EmployeeId == project.LeadTechnicianId);
-                var accountingStatus = _context.ProjectAccountingStatuses.SingleOrDefault(x => x.AccountingStatusId == project.AccountingStatusId);
 
                 var dto = new ProjectDto
                 {
@@ -147,12 +176,6 @@ namespace TT_Dashboard_Microservice.Controllers
                             Description = x.Description, ProjectStartStopDateId = x.ProjectStartStopDateId
                         }).ToList(),
 
-                    metrics = new ProjectMetricsDto
-                    {
-                        accountingStatus = accountingStatus.Description,
-                        amountInvoiced = CalculateAmountInvoiced(project.ProjectCode),
-                        amountOutstanding = CalculateAmountOutstanding(project.ProjectCode),
-                    },
 
                     laborBudget = project.LaborBudget,
                     laborActual = laborTotal,
@@ -168,7 +191,7 @@ namespace TT_Dashboard_Microservice.Controllers
                     } : null
                 };
 
-                
+                dto = FillInMetrics(dto);
                 return dto;
             }
 
@@ -230,57 +253,47 @@ namespace TT_Dashboard_Microservice.Controllers
             return invoices.Select(x => new InvoiceDto
             {
                 id = x.TxnId,
-                appliedAmount = Math.Abs(x.AppliedAmount??0m),
+                appliedAmount = Math.Abs(x.AppliedAmount ?? 0m),
                 timeCreated = x.TimeCreated.Value.ToShortDateString(),
-                total = x.Total??0m,
+                total = x.Total ?? 0m,
                 daysSinceInvoice = (DateTime.Now - (x.TxnDate ?? DateTime.Now)).Days,
                 txnDate = x.TxnDate.ToString()
             }).ToList();
         }
 
-        //@if(Model.Project.ServicePlan ! = null)
-        //{
-        //        < tr >
-        //            @if(LoggedInUser.CurrentUser.CanEditProjects && Model.Project.ThirdPartySupportContracts.OrderBy(l => l.Description).Count() > 0)
-        //                {
-        //                < td ></ td >
-        //                }
-        //            < td > Taurus </ td >
-        //            < td > @Model.Project.ServicePlan.Name </ td >
-        //            < td > @Model.Project.ServicePlan.DurationDays days </ td >
-        //        </ tr >
-        //        }
-        //      @foreach(var p in Model.Project.ThirdPartySupportContracts.OrderBy(l => l.Description))
-        //        {
-        //        <tr>
-        //            @if(LoggedInUser.CurrentUser.CanEditProjects)
-        //{
-        //                < td >
-        //                    < a href = "@Url.Action("Edit3rdPartyPlan", "Project", new {id = p.ThirdPartySupportContractId})" >< i class="icon-pencil"></i></a>
-        //                    <a href = "javascript:void(0)" onclick="deletePlan(@p.ThirdPartySupportContractId)"><i class="icon-remove-sign"></i></a>
-        //                </td>
-        //                }
-        //            <td>@p.Provider</td>
-        //            <td>@Html.Raw((p.Description ?? "").Replace("\n", "<br />"))</td>
-        //            <td>@(p.ExpirationDate == null ? "" : p.ExpirationDate.Value.ToString("MM/dd/yyyy")) </td>
-        //        </tr>
-        //        }
-
-
         [HttpGet("serviceplans/{id}")]
-        public IList<InvoiceDto> GetServicePlans(int id)
+        public IList<ServicePlanDto> GetServicePlans(int id)
         {
             var p = _context.Projects.SingleOrDefault(l => l.ProjectId == id);
             var invoices = _context.Qbinvoices.Where(x => x.Other == p.ProjectCode);
+            var list = new List<ServicePlanDto>();
 
-            return invoices.Select(x => new InvoiceDto
+            if (p.ServicePlanId.HasValue)
             {
-                appliedAmount = x.AppliedAmount ?? 0m,
-                timeCreated = x.TimeCreated.ToString(),
-                total = x.Total ?? 0m,
-                txnDate = x.TxnDate.ToString()
+                var plan = _context.ServicePlans.SingleOrDefault(x => x.ServicePlanId == p.ServicePlanId);
+                list.Add(
+                    new ServicePlanDto
+                    {
+                        id = plan.ServicePlanId,
+                        provider = "Taurus",
+                        plan = plan.Name,
+                        expiration = plan.DurationDays + " days"
+                    });
+            }
 
-            }).ToList();
+            var thirdParty = _context.ThirdPartySupportContracts
+                .Where(x => x.ProjectId == id)
+                .OrderBy(x=>x.Description)
+                .Select (x=>new ServicePlanDto
+                {
+                    id = x.ThirdPartySupportContractId,
+                    provider = x.Provider,
+                    plan = x.Description,
+                    expiration = x.ExpirationDate != null ? x.ExpirationDate.Value.ToShortDateString() : ""
+                }).ToList();
+
+            list.AddRange(thirdParty);
+            return list;
         }
 
         [HttpGet("itemtroubleticket/{id}")]
@@ -290,12 +303,14 @@ namespace TT_Dashboard_Microservice.Controllers
             var tickets = _context.TroubleTickets.Where(x => x.ProjectId == id);
             return tickets.Select(x => new ItemTroubleTicketDto
             {
+                id=x.TroubleTicketId,
                 title = x.Title,
                 statusString = x.Status.ToString(),
                 dateCreated = x.DateCreated.ToShortDateString(),
-                dateDue = x.DateDue.ToString(),
-                dateClosed = x.DateClosed.ToString(),
+                dateDue = x.DateDue.HasValue ? x.DateDue.Value.ToShortDateString() : "",
+                dateClosed = x.DateClosed.HasValue ? x.DateClosed.Value.ToShortDateString() : "",
 //                assignedToList = x.TroubleTicketAssignments.ToString()
+                assignedToList = ""         // TODO - need to grab this!
             }).ToList();
         }
 

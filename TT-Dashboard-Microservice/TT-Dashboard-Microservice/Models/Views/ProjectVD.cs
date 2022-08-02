@@ -89,6 +89,11 @@ namespace TT_Dashboard_Microservice.Models.Views
 
     public class ProjectMetricsDto
     {
+        public bool hasServicePlan { get; set; }
+        public string servicePlan { get; set; }
+        public string leadTechnician { get; set; }
+        public string programmer { get; set; }
+        public decimal quote { get; set; }
         public decimal amountInvoiced { get; set; }
         public decimal amountOutstanding { get; set; }
         public decimal laborActual { get; set; }
@@ -99,7 +104,7 @@ namespace TT_Dashboard_Microservice.Models.Views
     {
         public int id { get; set; }
         public string provider { get; set; }
-        public string description { get; set; }
+        public string plan { get; set; }
         public string expiration { get; set; }
     }
 

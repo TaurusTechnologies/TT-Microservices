@@ -17,6 +17,7 @@ import {
   ProjectProductFieldUpdateDto,
   ProjectProductFieldUpdateResultDto,
   ProjectRoomDto,
+  ServicePlanDto,
 } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
@@ -81,7 +82,7 @@ export class Project<SecurityDataType = unknown> extends HttpClient<SecurityData
    * @secure
    */
   serviceplansDetail = (id: number, params: RequestParams = {}) =>
-    this.request<InvoiceDto[], any>({
+    this.request<ServicePlanDto[], any>({
       path: `/Project/serviceplans/${id}`,
       method: "GET",
       secure: true,

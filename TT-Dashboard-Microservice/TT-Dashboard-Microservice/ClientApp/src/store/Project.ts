@@ -1,6 +1,6 @@
 import { Action, Reducer } from 'redux';
 import { AppThunkAction } from '.';
-import { InvoiceDto, ItemHistoryDto, ProjectDto, ProjectRoomDto } from '../apiClient/data-contracts';
+import { InvoiceDto, ItemHistoryDto, ItemTroubleTicketDto, ProjectDto, ProjectRoomDto, ServicePlanDto } from '../apiClient/data-contracts';
 import { Project as ProjectApi } from '../apiClient/Project';
 
 // -----------------
@@ -13,6 +13,8 @@ export interface ProjectState {
     rooms: ProjectRoomDto[];
     invoices: InvoiceDto[];
     itemHistory: ItemHistoryDto[];
+    troubleTickets: ItemTroubleTicketDto[];
+    servicePlans: ServicePlanDto[];
 }
 
 // -----------------
@@ -41,7 +43,6 @@ interface ReceiveProjectRoomsAction {
     rooms: ProjectRoomDto[];
 }
 
-
 interface RequestItemHistoryAction {
     type: 'REQUEST_ITEM_HISTORY';
     id: number;
@@ -62,14 +63,36 @@ interface ReceiveInvoicesAction {
 interface RequestInvoicesAction {
     type: 'REQUEST_INVOICES';
     id: number;
-    invoices: InvoiceDto[];
+}
+
+interface ReceiveTroubleTicketsAction {
+    type: 'RECEIVE_TROUBLE_TICKETS';
+    id: number;
+    tickets: ItemTroubleTicketDto[];
+}
+
+interface RequestTroubleTicketsAction {
+    type: 'REQUEST_TROUBLE_TICKETS';
+    id: number;
+}
+
+interface ReceiveServicePlansAction {
+    type: 'RECEIVE_SERVICE_PLANS';
+    id: number;
+    servicePlans: ServicePlanDto[];
+}
+
+interface RequestServicePlansAction {
+    type: 'REQUEST_SERVICE_PLANS';
+    id: number;
 }
 
 
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
 type KnownAction = RequestProjectAction | ReceiveProjectAction | ReceiveProjectRoomsAction | RequestProjectRoomsAction
-    | ReceiveItemHistoryAction | RequestItemHistoryAction | ReceiveInvoicesAction | RequestInvoicesAction;
+    | ReceiveItemHistoryAction | RequestItemHistoryAction | ReceiveInvoicesAction | RequestInvoicesAction
+    | ReceiveTroubleTicketsAction | RequestTroubleTicketsAction | ReceiveServicePlansAction | RequestServicePlansAction;
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
@@ -92,6 +115,12 @@ export const actionCreators = {
                             dispatch({ type: 'RECEIVE_ITEM_HISTORY', id: id, itemHistory: response.data });
                             api.invoicesDetail(id).then(response => {
                                 dispatch({ type: 'RECEIVE_INVOICES', id: id, invoices: response.data });
+                                api.itemtroubleticketDetail(id).then(response => {
+                                    dispatch({ type: 'RECEIVE_TROUBLE_TICKETS', id: id, tickets: response.data });
+                                    api.serviceplansDetail(id).then(response => {
+                                        dispatch({ type: 'RECEIVE_SERVICE_PLANS', id: id, servicePlans: response.data });
+                                    })
+                                })
                             })
                         })
                     })
@@ -115,7 +144,9 @@ const unloadedState: ProjectState = {
     },
     itemHistory: [],
     rooms: [],
-    invoices: []
+    invoices: [],
+    troubleTickets: [],
+    servicePlans: []
 };
 
 export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, incomingAction: Action): ProjectState => {
@@ -132,7 +163,9 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                 isLoading: true,
                 rooms: state.rooms,
                 invoices: state.invoices,
-                itemHistory: state.itemHistory
+                itemHistory: state.itemHistory,
+                troubleTickets: state.troubleTickets,
+                servicePlans: state.servicePlans
             };
         case 'RECEIVE_PROJECT':
             // Only accept the incoming data if it matches the most recent request. This ensures we correctly
@@ -144,7 +177,9 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                     isLoading: false,
                     rooms: state.rooms,
                     invoices: state.invoices,
-                    itemHistory: state.itemHistory
+                    itemHistory: state.itemHistory,
+                    troubleTickets: state.troubleTickets,
+                    servicePlans: state.servicePlans
                 };
             }
             break;
@@ -155,7 +190,9 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                 isLoading: true,
                 rooms: state.rooms,
                 invoices: state.invoices,
-                itemHistory: state.itemHistory
+                itemHistory: state.itemHistory,
+                troubleTickets: state.troubleTickets,
+                servicePlans: state.servicePlans
             };
         case 'RECEIVE_PROJECT_ROOMS':
             // Only accept the incoming data if it matches the most recent request. This ensures we correctly
@@ -167,7 +204,9 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                     isLoading: false,
                     rooms: action.rooms,
                     invoices: state.invoices,
-                    itemHistory: state.itemHistory
+                    itemHistory: state.itemHistory,
+                    troubleTickets: state.troubleTickets,
+                    servicePlans: state.servicePlans
                 };
             }
             break;
@@ -178,7 +217,9 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                 isLoading: true,
                 rooms: state.rooms,
                 invoices: state.invoices,
-                itemHistory: state.itemHistory
+                itemHistory: state.itemHistory,
+                troubleTickets: state.troubleTickets,
+                servicePlans: state.servicePlans
             };
         case 'RECEIVE_ITEM_HISTORY':
             // Only accept the incoming data if it matches the most recent request. This ensures we correctly
@@ -190,7 +231,9 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                     isLoading: true,
                     rooms: state.rooms,
                     invoices: state.invoices,
-                    itemHistory: action.itemHistory
+                    itemHistory: action.itemHistory,
+                    troubleTickets: state.troubleTickets,
+                    servicePlans: state.servicePlans
                 };
             }
             break;
@@ -201,7 +244,9 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                 isLoading: true,
                 rooms: state.rooms,
                 invoices: state.invoices,
-                itemHistory: state.itemHistory
+                itemHistory: state.itemHistory,
+                troubleTickets: state.troubleTickets,
+                servicePlans: state.servicePlans
             };
         case 'RECEIVE_INVOICES':
             // Only accept the incoming data if it matches the most recent request. This ensures we correctly
@@ -210,10 +255,66 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                 return {
                     id: action.id,
                     project: state.project,
-                    isLoading: false,
+                    isLoading: true,
                     rooms: state.rooms,
                     invoices: action.invoices,
-                    itemHistory: state.itemHistory
+                    itemHistory: state.itemHistory,
+                    troubleTickets: state.troubleTickets,
+                    servicePlans: state.servicePlans
+                };
+            }
+            break;
+        case 'REQUEST_TROUBLE_TICKETS':
+            return {
+                id: action.id,
+                project: state.project,
+                isLoading: true,
+                rooms: state.rooms,
+                invoices: state.invoices,
+                itemHistory: state.itemHistory,
+                troubleTickets: state.troubleTickets,
+                servicePlans: state.servicePlans
+            };
+        case 'RECEIVE_TROUBLE_TICKETS':
+            // Only accept the incoming data if it matches the most recent request. This ensures we correctly
+            // handle out-of-order responses.
+            if (action.id === state.id) {
+                return {
+                    id: action.id,
+                    project: state.project,
+                    isLoading: true,
+                    rooms: state.rooms,
+                    invoices: state.invoices,
+                    itemHistory: state.itemHistory,
+                    troubleTickets: action.tickets,
+                    servicePlans: state.servicePlans
+                };
+            }
+            break;
+        case 'REQUEST_SERVICE_PLANS':
+            return {
+                id: action.id,
+                project: state.project,
+                isLoading: true,
+                rooms: state.rooms,
+                invoices: state.invoices,
+                itemHistory: state.itemHistory,
+                troubleTickets: state.troubleTickets,
+                servicePlans: state.servicePlans
+            };
+        case 'RECEIVE_SERVICE_PLANS':
+            // Only accept the incoming data if it matches the most recent request. This ensures we correctly
+            // handle out-of-order responses.
+            if (action.id === state.id) {
+                return {
+                    id: action.id,
+                    project: state.project,
+                    isLoading: false,
+                    rooms: state.rooms,
+                    invoices: state.invoices,
+                    itemHistory: state.itemHistory,
+                    troubleTickets: state.troubleTickets,
+                    servicePlans: action.servicePlans
                 };
             }
             break;

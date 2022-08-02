@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { ApplicationState } from '../store';
 import * as ProjectStore from '../store/Project';
 import * as NumericInput from "react-numeric-input";
-import { InvoiceDto, ItemHistoryDto, ProjectProductDto, ProjectRoomDto } from '../apiClient/data-contracts';
+import { InvoiceDto, ItemHistoryDto, ItemTroubleTicketDto, ProjectProductDto, ProjectRoomDto, ServicePlanDto } from '../apiClient/data-contracts';
 
 
 interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -172,7 +172,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
 
         let customerName = this.props.project.customer == null ? "" : this.props.project.customer.name;
 
-        let renderItemHistory = () => {
+        let renderProjectHistory = () => {
             return (
                 <div>
                     <ul>
@@ -183,6 +183,50 @@ class FetchData extends React.PureComponent<ProjectProps> {
                     )}
                     </ul>
                  </div>);
+        }
+
+        let renderTroubleTickets = () => {
+            return (
+                <div>
+                    <table className='table table-striped' aria-labelledby="tabelLabel">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Due Date</th>
+                                <th>Closed On</th>
+                                <th>Assigned To</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {this.props.troubleTickets.map((item: ItemTroubleTicketDto) =>
+                                <tr key={item.id!}>
+                                    <td>
+                                        {item.title}
+                                    </td>
+                                    <td>
+                                        {item.statusString}
+                                    </td>
+                                    <td>
+                                        {item.dateCreated}
+                                    </td>
+                                    <td>
+                                        {item.dateDue}
+                                    </td>
+                                    <td>
+                                        {item.dateClosed}
+                                    </td>
+                                    <td>
+                                        {item.assignedToList}
+                                    </td>
+                                </tr>
+                            )}
+
+                        </tbody>
+
+                    </table>
+                </div>);
         }
 
         let renderInvoices = () => {
@@ -221,17 +265,63 @@ class FetchData extends React.PureComponent<ProjectProps> {
                 </div>);
         }
 
+        let renderServicePlans = () => {
+            return (
+                <div>
+                    <table className='table table-striped' aria-labelledby="tabelLabel">
+                        <thead>
+                            <tr>
+                                <th>Provider</th>
+                                <th>Plan</th>
+                                <th>Expiration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {this.props.servicePlans.map((item: ServicePlanDto) =>
+                                <tr key={item.id!}>
+                                    <td>
+                                        {item.provider}
+                                    </td>
+                                    <td>
+                                        {item.plan}
+                                    </td>
+                                    <td>
+                                        {item.expiration}
+                                    </td>
+                                </tr>
+                            )}
+
+                        </tbody>
+
+                    </table>
+                </div>);
+        }
+
         let renderMetrics = () => {
             let project = this.props.project;
             let metrics = project.metrics;
+            if (project.metrics == null) {
+                return (<div>Loading Metrics...</div>);
+            }
+            console.info("Metrics");
+            console.info(project.metrics);
+
             return (
                 <div>
                     <ul>
-                    {/*    <li>Outstanding: ${metrics!.amountOutstanding}</li>*/}
-                    {/*    <li>Invoiced: ${metrics!.amountInvoiced}</li>*/}
-                    {/*    <li>Labor Actual: ${metrics!.laborActual}</li>*/}
+                        {/*<li>Service Plan: {metrics?.servicePlan}</li>*/}
+                        <li>Accounting Status: {metrics!.accountingStatus}</li>
+                        <li>Lead Technician: {metrics!.leadTechnician}</li>
+                        <li>Programmer: {metrics!.programmer}</li>
+                        <li>Original Quote: TBD</li>
+                        <li>Original Lead: TBD</li>
+                        <li>Quote: ${metrics!.quote}</li>
+                        <li>Outstanding: ${metrics!.amountOutstanding}</li>
+                        <li>Invoiced: ${metrics!.amountInvoiced}</li>
+                        <li>Labor Actual: ${metrics!.laborActual}</li>
                     </ul>
-                </div>);
+                </div>
+            );
         }
 
         //let updateProjectData = async (data: any) => {
@@ -261,9 +351,13 @@ class FetchData extends React.PureComponent<ProjectProps> {
 
                 </div>
 
+                <h2>Invoices</h2>
+                {renderInvoices()}
+
+                <h2>Parts</h2>
                 {this.props.rooms.map((room: ProjectRoomDto) =>
                     <div>
-                        <p>room.products!.length</p>
+                        {/*<p>{room.products!.length}</p>*/}
                         <h3>{room.roomName}</h3>
                         <table key={room.projectRoomId} className='table table-striped' aria-labelledby="tabelLabel">
                             <thead>
@@ -332,10 +426,12 @@ class FetchData extends React.PureComponent<ProjectProps> {
                 )}
                 <h2>Metrics</h2>
                 {renderMetrics()}
-                <h2>Item History</h2>
-                {renderItemHistory()}
-                <h2>Invoices</h2>
-                {renderInvoices()}
+                <h2>Service Plans</h2>
+                {renderServicePlans()}
+                <h2>Trouble Tickets</h2>
+                {renderTroubleTickets()}
+                <h2>Project History</h2>
+                {renderProjectHistory()}
             </div>
         );
     }
