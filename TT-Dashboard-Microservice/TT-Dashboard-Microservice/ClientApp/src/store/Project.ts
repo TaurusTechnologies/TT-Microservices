@@ -1,6 +1,6 @@
 import { Action, Reducer } from 'redux';
 import { AppThunkAction } from '.';
-import { ItemHistoryDto, ProjectDto, ProjectRoomDto } from '../apiClient/data-contracts';
+import { InvoiceDto, ItemHistoryDto, ProjectDto, ProjectRoomDto } from '../apiClient/data-contracts';
 import { Project as ProjectApi } from '../apiClient/Project';
 
 // -----------------
@@ -11,6 +11,7 @@ export interface ProjectState {
     id: number;
     project: ProjectDto;
     rooms: ProjectRoomDto[];
+    invoices: InvoiceDto[];
     itemHistory: ItemHistoryDto[];
 }
 
@@ -52,11 +53,23 @@ interface ReceiveItemHistoryAction {
     itemHistory: ItemHistoryDto[];
 }
 
+interface ReceiveInvoicesAction {
+    type: 'RECEIVE_INVOICES';
+    id: number;
+    invoices: InvoiceDto[];
+}
+
+interface RequestInvoicesAction {
+    type: 'REQUEST_INVOICES';
+    id: number;
+    invoices: InvoiceDto[];
+}
+
 
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
 type KnownAction = RequestProjectAction | ReceiveProjectAction | ReceiveProjectRoomsAction | RequestProjectRoomsAction
-    | ReceiveItemHistoryAction | RequestItemHistoryAction;
+    | ReceiveItemHistoryAction | RequestItemHistoryAction | ReceiveInvoicesAction | RequestInvoicesAction;
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
@@ -77,6 +90,9 @@ export const actionCreators = {
                         dispatch({ type: 'RECEIVE_PROJECT_ROOMS', id: id, rooms: response.data });
                         api.itemhistoryDetail(id).then(response => {
                             dispatch({ type: 'RECEIVE_ITEM_HISTORY', id: id, itemHistory: response.data });
+                            api.invoicesDetail(id).then(response => {
+                                dispatch({ type: 'RECEIVE_INVOICES', id: id, invoices: response.data });
+                            })
                         })
                     })
                 });
@@ -98,7 +114,8 @@ const unloadedState: ProjectState = {
         notes: '', isLegacyServicePlan: false
     },
     itemHistory: [],
-    rooms: []
+    rooms: [],
+    invoices: []
 };
 
 export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, incomingAction: Action): ProjectState => {
@@ -114,6 +131,7 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                 project: state.project,
                 isLoading: true,
                 rooms: state.rooms,
+                invoices: state.invoices,
                 itemHistory: state.itemHistory
             };
         case 'RECEIVE_PROJECT':
@@ -125,6 +143,7 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                     project: action.project,
                     isLoading: false,
                     rooms: state.rooms,
+                    invoices: state.invoices,
                     itemHistory: state.itemHistory
                 };
             }
@@ -135,6 +154,7 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                 project: state.project,
                 isLoading: true,
                 rooms: state.rooms,
+                invoices: state.invoices,
                 itemHistory: state.itemHistory
             };
         case 'RECEIVE_PROJECT_ROOMS':
@@ -146,6 +166,7 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                     project: state.project,
                     isLoading: false,
                     rooms: action.rooms,
+                    invoices: state.invoices,
                     itemHistory: state.itemHistory
                 };
             }
@@ -156,6 +177,7 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                 project: state.project,
                 isLoading: true,
                 rooms: state.rooms,
+                invoices: state.invoices,
                 itemHistory: state.itemHistory
             };
         case 'RECEIVE_ITEM_HISTORY':
@@ -165,9 +187,33 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                 return {
                     id: action.id,
                     project: state.project,
+                    isLoading: true,
+                    rooms: state.rooms,
+                    invoices: state.invoices,
+                    itemHistory: action.itemHistory
+                };
+            }
+            break;
+        case 'REQUEST_INVOICES':
+            return {
+                id: action.id,
+                project: state.project,
+                isLoading: true,
+                rooms: state.rooms,
+                invoices: state.invoices,
+                itemHistory: state.itemHistory
+            };
+        case 'RECEIVE_INVOICES':
+            // Only accept the incoming data if it matches the most recent request. This ensures we correctly
+            // handle out-of-order responses.
+            if (action.id === state.id) {
+                return {
+                    id: action.id,
+                    project: state.project,
                     isLoading: false,
                     rooms: state.rooms,
-                    itemHistory: action.itemHistory
+                    invoices: action.invoices,
+                    itemHistory: state.itemHistory
                 };
             }
             break;

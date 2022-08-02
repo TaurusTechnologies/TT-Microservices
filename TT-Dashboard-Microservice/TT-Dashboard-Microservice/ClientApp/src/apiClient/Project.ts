@@ -10,7 +10,9 @@
  */
 
 import {
+  InvoiceDto,
   ItemHistoryDto,
+  ItemTroubleTicketDto,
   ProjectDto,
   ProjectProductFieldUpdateDto,
   ProjectProductFieldUpdateResultDto,
@@ -51,6 +53,54 @@ export class Project<SecurityDataType = unknown> extends HttpClient<SecurityData
       body: data,
       secure: true,
       type: ContentType.Json,
+      format: "json",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Project
+   * @name InvoicesDetail
+   * @request GET:/Project/invoices/{id}
+   * @secure
+   */
+  invoicesDetail = (id: number, params: RequestParams = {}) =>
+    this.request<InvoiceDto[], any>({
+      path: `/Project/invoices/${id}`,
+      method: "GET",
+      secure: true,
+      format: "json",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Project
+   * @name ServiceplansDetail
+   * @request GET:/Project/serviceplans/{id}
+   * @secure
+   */
+  serviceplansDetail = (id: number, params: RequestParams = {}) =>
+    this.request<InvoiceDto[], any>({
+      path: `/Project/serviceplans/${id}`,
+      method: "GET",
+      secure: true,
+      format: "json",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Project
+   * @name ItemtroubleticketDetail
+   * @request GET:/Project/itemtroubleticket/{id}
+   * @secure
+   */
+  itemtroubleticketDetail = (id: number, params: RequestParams = {}) =>
+    this.request<ItemTroubleTicketDto[], any>({
+      path: `/Project/itemtroubleticket/${id}`,
+      method: "GET",
+      secure: true,
       format: "json",
       ...params,
     });

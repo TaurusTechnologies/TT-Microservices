@@ -92,6 +92,36 @@ namespace TT_Dashboard_Microservice.Models.Views
         public decimal amountInvoiced { get; set; }
         public decimal amountOutstanding { get; set; }
         public decimal laborActual { get; set; }
+        public string accountingStatus { get; set; }
+    }
+
+    public class ServicePlanDto
+    {
+        public int id { get; set; }
+        public string provider { get; set; }
+        public string description { get; set; }
+        public string expiration { get; set; }
+    }
+
+    public class ItemTroubleTicketDto
+    {
+        public int id { get; set; }
+        public string title { get; set; }
+        public string statusString { get; set; }
+        public string dateCreated { get; set; }
+        public string dateDue { get; set; }
+        public string dateClosed { get; set; }
+        public string assignedToList { get; set; }
+    }
+
+    public class InvoiceDto
+    {
+        public string id { get; set; }
+        public decimal total { get; set; }
+        public decimal appliedAmount { get; set; }
+        public string timeCreated { get; set; }
+        public string txnDate { get; set; }
+        public decimal daysSinceInvoice { get; set; }
     }
 
     public class ItemHistoryDto
@@ -103,6 +133,13 @@ namespace TT_Dashboard_Microservice.Models.Views
         public int authorId { get; set; }
         public string timeStamp { get; set; }
     }
+
+    public class ProjectProductFieldUpdateResultDto
+    {
+        public bool success { get; set; }
+        public string msg { get; set; }
+    }
+
 
     public class ProjectDto
     {

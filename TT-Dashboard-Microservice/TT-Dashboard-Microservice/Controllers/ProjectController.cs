@@ -83,6 +83,7 @@ namespace TT_Dashboard_Microservice.Controllers
                         .Sum();
 
                 var leadTechnician = _context.Employees.SingleOrDefault(x=>x.EmployeeId == project.LeadTechnicianId);
+                var accountingStatus = _context.ProjectAccountingStatuses.SingleOrDefault(x => x.AccountingStatusId == project.AccountingStatusId);
 
                 var dto = new ProjectDto
                 {
@@ -98,7 +99,7 @@ namespace TT_Dashboard_Microservice.Controllers
                     faxNumber = project.FaxNumber,
                     contactName = project.ContactName,
                     contactEmail = project.Email,
-                    isLegacyServicePlan = project.LegacyServicePlan??true,
+                    isLegacyServicePlan = project.LegacyServicePlan ?? true,
 
                     installAddress = new ProjectLocationDto
                     {
@@ -148,7 +149,9 @@ namespace TT_Dashboard_Microservice.Controllers
 
                     metrics = new ProjectMetricsDto
                     {
-
+                        accountingStatus = accountingStatus.Description,
+                        amountInvoiced = CalculateAmountInvoiced(project.ProjectCode),
+                        amountOutstanding = CalculateAmountOutstanding(project.ProjectCode),
                     },
 
                     laborBudget = project.LaborBudget,
@@ -173,14 +176,9 @@ namespace TT_Dashboard_Microservice.Controllers
             return null;
         }
 
-        public class ProjectProductFieldUpdateResultDto
-        {
-            public bool success { get; set; }
-            public string msg { get; set; }
-        }
 
         [HttpPost("projectproduct/{id}/field")]
-        public ProjectProductFieldUpdateResultDto UpdateProjectProductField (int id, ProjectProductFieldUpdateDto dto)
+        public ProjectProductFieldUpdateResultDto UpdateProductField (int id, ProjectProductFieldUpdateDto dto)
         {
             try
             {
@@ -223,8 +221,86 @@ namespace TT_Dashboard_Microservice.Controllers
 
         }
 
+        [HttpGet("invoices/{id}")]
+        public IList<InvoiceDto> GetInvoices(int id)
+        {
+            var p = _context.Projects.SingleOrDefault(l => l.ProjectId == id);
+            var invoices = _context.Qbinvoices.Where(x => x.Other == p.ProjectCode);
+
+            return invoices.Select(x => new InvoiceDto
+            {
+                id = x.TxnId,
+                appliedAmount = Math.Abs(x.AppliedAmount??0m),
+                timeCreated = x.TimeCreated.Value.ToShortDateString(),
+                total = x.Total??0m,
+                daysSinceInvoice = (DateTime.Now - (x.TxnDate ?? DateTime.Now)).Days,
+                txnDate = x.TxnDate.ToString()
+            }).ToList();
+        }
+
+        //@if(Model.Project.ServicePlan ! = null)
+        //{
+        //        < tr >
+        //            @if(LoggedInUser.CurrentUser.CanEditProjects && Model.Project.ThirdPartySupportContracts.OrderBy(l => l.Description).Count() > 0)
+        //                {
+        //                < td ></ td >
+        //                }
+        //            < td > Taurus </ td >
+        //            < td > @Model.Project.ServicePlan.Name </ td >
+        //            < td > @Model.Project.ServicePlan.DurationDays days </ td >
+        //        </ tr >
+        //        }
+        //      @foreach(var p in Model.Project.ThirdPartySupportContracts.OrderBy(l => l.Description))
+        //        {
+        //        <tr>
+        //            @if(LoggedInUser.CurrentUser.CanEditProjects)
+        //{
+        //                < td >
+        //                    < a href = "@Url.Action("Edit3rdPartyPlan", "Project", new {id = p.ThirdPartySupportContractId})" >< i class="icon-pencil"></i></a>
+        //                    <a href = "javascript:void(0)" onclick="deletePlan(@p.ThirdPartySupportContractId)"><i class="icon-remove-sign"></i></a>
+        //                </td>
+        //                }
+        //            <td>@p.Provider</td>
+        //            <td>@Html.Raw((p.Description ?? "").Replace("\n", "<br />"))</td>
+        //            <td>@(p.ExpirationDate == null ? "" : p.ExpirationDate.Value.ToString("MM/dd/yyyy")) </td>
+        //        </tr>
+        //        }
+
+
+        [HttpGet("serviceplans/{id}")]
+        public IList<InvoiceDto> GetServicePlans(int id)
+        {
+            var p = _context.Projects.SingleOrDefault(l => l.ProjectId == id);
+            var invoices = _context.Qbinvoices.Where(x => x.Other == p.ProjectCode);
+
+            return invoices.Select(x => new InvoiceDto
+            {
+                appliedAmount = x.AppliedAmount ?? 0m,
+                timeCreated = x.TimeCreated.ToString(),
+                total = x.Total ?? 0m,
+                txnDate = x.TxnDate.ToString()
+
+            }).ToList();
+        }
+
+        [HttpGet("itemtroubleticket/{id}")]
+
+        public IList<ItemTroubleTicketDto> GetTroubleTickets(int id)
+        {
+            var tickets = _context.TroubleTickets.Where(x => x.ProjectId == id);
+            return tickets.Select(x => new ItemTroubleTicketDto
+            {
+                title = x.Title,
+                statusString = x.Status.ToString(),
+                dateCreated = x.DateCreated.ToShortDateString(),
+                dateDue = x.DateDue.ToString(),
+                dateClosed = x.DateClosed.ToString(),
+//                assignedToList = x.TroubleTicketAssignments.ToString()
+            }).ToList();
+        }
+
         [HttpGet("itemhistory/{id}")]
-        public IList<ItemHistoryDto> GetProjectComments(int id)
+        public IList<ItemHistoryDto> GetComments(int id)
         {
             var p = _context.Projects.SingleOrDefault(l => l.ProjectId == id);
             if (p != null)
@@ -265,7 +341,7 @@ namespace TT_Dashboard_Microservice.Controllers
 
 
     [HttpGet("rooms/{id}")]
-        public IList<ProjectRoomDto> GetProjectRooms(int id)
+        public IList<ProjectRoomDto> GetRooms(int id)
         {
             var projectRooms = _context.ProjectRooms
                 .Where(x => x.ProjectId == id && !x.Room.IsDeleted.Value)

@@ -15,6 +15,21 @@ export interface EmployeeDto {
   fullName?: string | null;
 }
 
+export interface InvoiceDto {
+  id?: string | null;
+
+  /** @format double */
+  total?: number;
+
+  /** @format double */
+  appliedAmount?: number;
+  timeCreated?: string | null;
+  txnDate?: string | null;
+
+  /** @format double */
+  daysSinceInvoice?: number;
+}
+
 export interface ItemHistoryDto {
   /** @format int32 */
   id?: number;
@@ -27,6 +42,17 @@ export interface ItemHistoryDto {
   /** @format int32 */
   authorId?: number;
   timeStamp?: string | null;
+}
+
+export interface ItemTroubleTicketDto {
+  /** @format int32 */
+  id?: number;
+  title?: string | null;
+  statusString?: string | null;
+  dateCreated?: string | null;
+  dateDue?: string | null;
+  dateClosed?: string | null;
+  assignedToList?: string | null;
 }
 
 export interface LoginModel {
@@ -110,6 +136,7 @@ export interface ProjectMetricsDto {
 
   /** @format double */
   laborActual?: number;
+  accountingStatus?: string | null;
 }
 
 export interface ProjectProductDto {

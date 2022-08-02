@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { ApplicationState } from '../store';
 import * as ProjectStore from '../store/Project';
 import * as NumericInput from "react-numeric-input";
-import { ItemHistoryDto, ProjectProductDto, ProjectRoomDto } from '../apiClient/data-contracts';
+import { InvoiceDto, ItemHistoryDto, ProjectProductDto, ProjectRoomDto } from '../apiClient/data-contracts';
 
 
 interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -185,6 +185,55 @@ class FetchData extends React.PureComponent<ProjectProps> {
                  </div>);
         }
 
+        let renderInvoices = () => {
+            return (
+                <div>
+                    <table className='table table-striped' aria-labelledby="tabelLabel">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Amount Paid</th>
+                                <th>Days Since Invoice</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {this.props.invoices.map((item: InvoiceDto) =>
+                                <tr key={item.id!}>
+                                    <td>
+                                        {item.timeCreated}
+                                    </td>
+                                    <td>
+                                        ${item.total}
+                                    </td>
+                                    <td>
+                                        ${item.appliedAmount}
+                                    </td>
+                                    <td>
+                                        {item.daysSinceInvoice}
+                                    </td>
+                                </tr>
+                            )}
+
+                        </tbody>
+
+                    </table>
+                </div>);
+        }
+
+        let renderMetrics = () => {
+            let project = this.props.project;
+            let metrics = project.metrics;
+            return (
+                <div>
+                    <ul>
+                    {/*    <li>Outstanding: ${metrics!.amountOutstanding}</li>*/}
+                    {/*    <li>Invoiced: ${metrics!.amountInvoiced}</li>*/}
+                    {/*    <li>Labor Actual: ${metrics!.laborActual}</li>*/}
+                    </ul>
+                </div>);
+        }
+
         //let updateProjectData = async (data: any) => {
         //    return await this.postData('project/rooms', {id: this.props.match.params.id}); // parses JSON response into native JavaScript objects
         //}
@@ -214,6 +263,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
 
                 {this.props.rooms.map((room: ProjectRoomDto) =>
                     <div>
+                        <p>room.products!.length</p>
                         <h3>{room.roomName}</h3>
                         <table key={room.projectRoomId} className='table table-striped' aria-labelledby="tabelLabel">
                             <thead>
@@ -280,7 +330,12 @@ class FetchData extends React.PureComponent<ProjectProps> {
                         </table>
                     </div>
                 )}
+                <h2>Metrics</h2>
+                {renderMetrics()}
+                <h2>Item History</h2>
                 {renderItemHistory()}
+                <h2>Invoices</h2>
+                {renderInvoices()}
             </div>
         );
     }
