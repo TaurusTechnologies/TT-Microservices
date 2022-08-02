@@ -170,7 +170,10 @@ class FetchData extends React.PureComponent<ProjectProps> {
             return(<div></div>);
         }
 
-        let customerName = this.props.project.customer == null ? "" : this.props.project.customer.name;
+        console.info("Loading? " + this.props.isLoading);
+
+        let project = this.props.project;
+        let customer = project.customer;
 
         let renderProjectHistory = () => {
             return (
@@ -303,8 +306,6 @@ class FetchData extends React.PureComponent<ProjectProps> {
             if (project.metrics == null) {
                 return (<div>Loading Metrics...</div>);
             }
-            console.info("Metrics");
-            console.info(project.metrics);
 
             return (
                 <div>
@@ -340,16 +341,19 @@ class FetchData extends React.PureComponent<ProjectProps> {
 
         return (
             <div>
-                <h2>{customerName} - {this.props.project.name}</h2>
+                <h2>{customer!.name} - {project.name} ({project.jobNumber})</h2>
                 <div>
                     <h3>Project Details</h3>
                     <ul className="">
                         <li className="bigger">
-                            <b>Customer:</b>
+                            <b>Customer: {customer!.name}</b>
                         {/*    <a href="/Customer/View/{this.props.project.customer?.customerId}">{this.props.project.customer?.name}</a>*/}
                         </li>
-                        <li className="bigger"><b>Job Number:</b> { this.props.project.jobNumber }</li>
-                        <li className="bigger"><b>PO Number:</b> {this.props.project.poNumber}</li>
+                        <li className="bigger">
+                            <b>Contact Name: {customer!.contactName}</b>
+                        </li>
+                        <li className="bigger"><b>Job Number:</b> { project.jobNumber }</li>
+                        <li className="bigger"><b>PO Number:</b> {project.poNumber}</li>
                     </ul>
                 {/*    <ul class="rightlist">*/}
                 {/*        <li class="bigger"><b>Contact Name:</b> {{ vm.project.ContactName }}</li>*/}

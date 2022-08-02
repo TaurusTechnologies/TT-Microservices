@@ -198,7 +198,8 @@ namespace TT_Dashboard_Microservice.Controllers
                     customer = new ProjectCustomerDto
                     {
                         customerId = project.CustomerId,
-                        name = customer != null ? customer.ContactName : "",
+                        contactName = customer != null ? customer.ContactName : "",
+                        name = customer != null ? customer.Name : "",
                     },
 
                     notes = project.Notes,

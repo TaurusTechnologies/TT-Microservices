@@ -75,6 +75,7 @@ namespace TT_Dashboard_Microservice.Models.Views
     {
         public int customerId { get; set; }
         public string name { get; set; }
+        public string contactName { get; set; }
     }
 
     public class ProjectLocationDto

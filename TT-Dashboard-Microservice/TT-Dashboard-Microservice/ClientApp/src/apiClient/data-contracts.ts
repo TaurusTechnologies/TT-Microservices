@@ -64,6 +64,7 @@ export interface ProjectCustomerDto {
   /** @format int32 */
   customerId?: number;
   name?: string | null;
+  contactName?: string | null;
 }
 
 export interface ProjectDto {
