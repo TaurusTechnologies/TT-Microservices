@@ -728,6 +728,14 @@
             "type": "number",
             "format": "double"
           },
+          "expenseApproved": {
+            "type": "number",
+            "format": "double"
+          },
+          "expensePending": {
+            "type": "number",
+            "format": "double"
+          },
           "amountInvoiced": {
             "type": "number",
             "format": "double"
@@ -741,6 +749,18 @@
             "format": "double"
           },
           "accountingStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "startDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "completionDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateDescription": {
             "type": "string",
             "nullable": true
           }

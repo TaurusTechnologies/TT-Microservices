@@ -316,9 +316,19 @@ class FetchData extends React.PureComponent<ProjectProps> {
                         <li>Original Quote: TBD</li>
                         <li>Original Lead: TBD</li>
                         <li>Quote: ${metrics!.quote}</li>
-                        <li>Outstanding: ${metrics!.amountOutstanding}</li>
+                        <li>Labor Quote: ${project.laborBudget}</li>
+                        <li>Labor Actual: ${project.laborActual}</li>
+                        <li>Expense Quote: ${project.expenseBudget}</li>
+                        <li>Expense Approved: ${metrics!.expenseApproved}</li>
+                        <li>Expense Pending: ${metrics!.expensePending}</li>
+                        <li>Programming Quote: ${project.codingBudget}</li>
+                        <li>Programming Actual: ${project.codingActual}</li>
+                        <li>Product Quote: ${project.productBudget}</li>
+                        <li>Product Actual: ${project.productActual}</li>
+                        <li>Start Date: {metrics!.startDate}</li>
+                        <li>End Date: {metrics!.completionDate}</li>
                         <li>Invoiced: ${metrics!.amountInvoiced}</li>
-                        <li>Labor Actual: ${metrics!.laborActual}</li>
+                        <li>Outstanding: ${metrics!.amountOutstanding}</li>
                     </ul>
                 </div>
             );

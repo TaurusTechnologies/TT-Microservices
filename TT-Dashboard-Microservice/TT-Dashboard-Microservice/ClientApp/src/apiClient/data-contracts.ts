@@ -137,6 +137,12 @@ export interface ProjectMetricsDto {
   quote?: number;
 
   /** @format double */
+  expenseApproved?: number;
+
+  /** @format double */
+  expensePending?: number;
+
+  /** @format double */
   amountInvoiced?: number;
 
   /** @format double */
@@ -145,6 +151,9 @@ export interface ProjectMetricsDto {
   /** @format double */
   laborActual?: number;
   accountingStatus?: string | null;
+  startDate?: string | null;
+  completionDate?: string | null;
+  dateDescription?: string | null;
 }
 
 export interface ProjectProductDto {

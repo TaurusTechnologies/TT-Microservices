@@ -94,10 +94,15 @@ namespace TT_Dashboard_Microservice.Models.Views
         public string leadTechnician { get; set; }
         public string programmer { get; set; }
         public decimal quote { get; set; }
+        public decimal expenseApproved { get; set; }
+        public decimal expensePending { get; set; }
         public decimal amountInvoiced { get; set; }
         public decimal amountOutstanding { get; set; }
         public decimal laborActual { get; set; }
         public string accountingStatus { get; set; }
+        public string startDate { get; set; }
+        public string completionDate { get; set; }
+        public string dateDescription { get; set; }
     }
 
     public class ServicePlanDto

@@ -58,19 +58,52 @@ namespace TT_Dashboard_Microservice.Controllers
                 ? revisionRooms.Where(x => x.Purchased).Sum(x => x.RoomTotals ?? 0)
                 : 0.0m;
 
+            var expensesActiveAndApproved = _context.Expenses.Where(x => x.ProjectId == p.projectId && (x.ExpenseStatus == 2 || x.ExpenseStatus == 3));
+            var expensesActiveAndPending = _context.Expenses.Where(x => x.ProjectId == p.projectId && (x.ExpenseStatus == 1 || x.ExpenseStatus == 6));
+
+            var start = _context.ProjectStartStopDates
+                .Where(x => x.ProjectId == project.ProjectId && x.StartDate != null)
+                .OrderBy(x => x.StartDate)
+                .FirstOrDefault();
+
+            var end = _context.ProjectStartStopDates
+                .Where(x => x.ProjectId == project.ProjectId && x.EndDate != null)
+                .OrderByDescending(x => x.EndDate)
+                .FirstOrDefault();
+
 
             p.metrics = new ProjectMetricsDto
             {
                 accountingStatus = accountingStatus.Description,
                 hasServicePlan = p.isLegacyServicePlan,
-                servicePlan = servicePlan != null ? servicePlan.Name : "",  
+                servicePlan = servicePlan != null ? servicePlan.Name : "",
                 leadTechnician = leadTechnician != null ? leadTechnician.FullName : "",
                 programmer = programmer != null ? programmer.FullName : "",
                 quote = roomTotals,
+                expenseApproved = expensesActiveAndApproved.Sum(x=>x.CompanyAmount)??0m,
+                expensePending = expensesActiveAndPending.Sum(x => x.CompanyAmount) ?? 0m,
 
                 amountInvoiced = CalculateAmountInvoiced(project.ProjectCode),
                 amountOutstanding = CalculateAmountOutstanding(project.ProjectCode),
             };
+
+            if (start != null)
+            {
+                if (start.StartDate != null)
+                {
+                    p.metrics.startDate = start.StartDate.HasValue ? start.StartDate.Value.ToShortDateString() : "";
+                }
+
+                p.metrics.dateDescription = start.Description;
+            }
+
+            if (end != null)
+            {
+                if (end.EndDate != null)
+                {
+                    p.metrics.completionDate = end.EndDate.HasValue ? end.EndDate.Value.ToShortDateString() : "";
+                }
+            }
 
             return p;
         }
@@ -102,13 +135,14 @@ namespace TT_Dashboard_Microservice.Controllers
 
                 decimal? laborTotal =
                     _context.TimeLogs.Where(
-                        t => t.Activity.BillingType != null && (t.Activity.BillingType == (int)BillingType.Labor))
+                        t => t.ProjectId == id && 
+                        (t.Activity.BillingType != null && (t.Activity.BillingType == (int)BillingType.Labor)))
                         .Select(tl => tl.Hours * tl.Activity.BillableRate)
                         .Sum();
 
                 decimal? codingTotal =
                     _context.TimeLogs.Where(
-                        x => x.Activity.BillingType != null && (x.Activity.BillingType == (int)BillingType.Programming))
+                        x => x.ProjectId == id && (x.Activity.BillingType != null && (x.Activity.BillingType == (int)BillingType.Programming)))
                         .Select(xl => xl.Hours * xl.Activity.BillableRate)
                         .Sum();
 
