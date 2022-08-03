@@ -392,25 +392,25 @@ class FetchData extends React.PureComponent<ProjectProps> {
                 <div>
                     <ul>
                         {/*<li>Service Plan: {metrics?.servicePlan}</li>*/}
-                        <li>Accounting Status: {metrics!.accountingStatus}</li>
-                        <li>Lead Technician: {metrics!.leadTechnician}</li>
-                        <li>Programmer: {metrics!.programmer}</li>
-                        <li>Original Quote: TBD</li>
-                        <li>Original Lead: TBD</li>
-                        <li>Quote: ${metrics!.quote}</li>
-                        <li>Labor Quote: ${project.laborBudget}</li>
-                        <li>Labor Actual: ${project.laborActual}</li>
-                        <li>Expense Quote: ${project.expenseBudget}</li>
-                        <li>Expense Approved: ${metrics!.expenseApproved}</li>
-                        <li>Expense Pending: ${metrics!.expensePending}</li>
-                        <li>Programming Quote: ${project.codingBudget}</li>
-                        <li>Programming Actual: ${project.codingActual}</li>
-                        <li>Product Quote: ${project.productBudget}</li>
-                        <li>Product Actual: ${project.productActual}</li>
-                        <li>Start Date: {metrics!.startDate}</li>
-                        <li>End Date: {metrics!.completionDate}</li>
-                        <li>Invoiced: ${metrics!.amountInvoiced}</li>
-                        <li>Outstanding: ${metrics!.amountOutstanding}</li>
+                        <li><b>Accounting Status:</b> {metrics!.accountingStatus}</li>
+                        <li><b>Lead Technician:</b> {metrics!.leadTechnician}</li>
+                        <li><b>Programmer:</b> {metrics!.programmer}</li>
+                        <li><b>Original Quote:</b> TBD</li>
+                        <li><b>Original Lead:</b> TBD</li>
+                        <li><b>Quote:</b> ${metrics!.quote}</li>
+                        <li><b>Labor Quote:</b> ${project.laborBudget}</li>
+                        <li><b>Labor Actual:</b> ${project.laborActual}</li>
+                        <li><b>Expense Quote:</b> ${project.expenseBudget}</li>
+                        <li><b>Expense Approved:</b> ${metrics!.expenseApproved}</li>
+                        <li><b>Expense Pending:</b> ${metrics!.expensePending}</li>
+                        <li><b>Programming Quote:</b> ${project.codingBudget}</li>
+                        <li><b>Programming Actual:</b> ${project.codingActual}</li>
+                        <li><b>Product Quote:</b> ${project.productBudget}</li>
+                        <li><b>Product Actual:</b> ${project.productActual}</li>
+                        <li><b>Start Date:</b> {metrics!.startDate}</li>
+                        <li><b>End Date:</b> {metrics!.completionDate}</li>
+                        <li><b>Invoiced:</b> ${metrics!.amountInvoiced}</li>
+                        <li><b>Outstanding:</b> ${metrics!.amountOutstanding}</li>
                     </ul>
                 </div>
             );
@@ -535,7 +535,8 @@ class FetchData extends React.PureComponent<ProjectProps> {
                         </Col>
                     </Row>
                 </Col>
-                <Col>
+
+                <Col id="rightColumn">
                     <Row>
                         <Col>
                             <h2>Metrics</h2>
@@ -543,6 +544,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
                         </Col>
                     </Row>
                 </Col>
+
             </Row>
         );
     }

@@ -307,7 +307,7 @@ input.button {
     padding: 0;
 }
 
-#leftColumn div, #rightColumn div {
+#leftColumn div {
     overflow: hidden;
     padding: 20px;
 }
@@ -317,9 +317,6 @@ input.button {
     border-bottom: 1px solid #d6d6d6;
     border-left: 1px solid #d6d6d6;
     border-right: 1px solid #d6d6d6;
-    float: right;
-    margin: 0 10px;
-    width: 400px;
 }
 /* Title Bar and Action Buttons */
 .actions {
@@ -1010,11 +1007,11 @@ tr.errorState, td.errorState, td.errorState input {
     padding-bottom: 5px;
 }
 
-#rightColumn #assignmentsandfiles div {
+#assignmentsandfiles div {
     padding: 0;
 }
 
-    #rightColumn #assignmentsandfiles div:first-child {
+    #assignmentsandfiles div:first-child {
         margin-top: 0;
     }
 /* Heading General {*/
@@ -1190,18 +1187,6 @@ tr.errorState, td.errorState, td.errorState input {
         -ms-overflow-style: -ms-autohiding-scrollbar;
         -webkit-overflow-scrolling: touch;
         width: 100%;
-    }
-}
-/* Media Queries */
-@media (max-width:1040px) {
-    #leftColumn {
-        margin: 0;
-    }
-
-    #rightColumn {
-        float: none;
-        margin: 0;
-        width: auto;
     }
 }
 
