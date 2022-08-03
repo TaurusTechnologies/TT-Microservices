@@ -165,7 +165,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
         let id = this.props.match.params.id;
 
         if (this.props.isProjectLoading) {
-            return(<div></div>);
+            return(<div>Loading...</div>);
         }
 
         console.info("Loading? " + this.props.isProjectLoading);

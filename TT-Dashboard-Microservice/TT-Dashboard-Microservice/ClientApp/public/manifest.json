@@ -1,6 +1,6 @@
 {
-  "short_name": "TT_Dashboard_Microservice",
-  "name": "TT_Dashboard_Microservice",
+  "short_name": "Dashboard_Microservice",
+  "name": "Dashboard Microservice",
   "icons": [
     {
       "src": "favicon.ico",
