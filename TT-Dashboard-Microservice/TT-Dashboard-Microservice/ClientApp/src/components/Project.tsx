@@ -6,6 +6,9 @@ import { ApplicationState } from '../store';
 import * as ProjectStore from '../store/Project';
 import * as NumericInput from "react-numeric-input";
 import { InvoiceDto, ItemHistoryDto, ItemTroubleTicketDto, ProjectProductDto, ProjectRoomDto, ServicePlanDto } from '../apiClient/data-contracts';
+import { Accordion, Row, Col } from 'reactstrap';
+
+import './Project.css';
 
 interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     name: string;
@@ -173,6 +176,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
         let project = this.props.project;
         let customer = project.customer;
 
+        // Project History
         let renderProjectHistory = () => {
             return (
                 <div>
@@ -186,6 +190,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
                  </div>);
         }
 
+        // Trouble Tickets
         let renderTroubleTickets = () => {
             return (
                 <div>
@@ -230,6 +235,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
                 </div>);
         }
 
+        // Invoices
         let renderInvoices = () => {
             return (
                 <div>
@@ -266,6 +272,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
                 </div>);
         }
 
+        // Service Plans
         let renderServicePlans = () => {
             return (
                 <div>
@@ -298,6 +305,84 @@ class FetchData extends React.PureComponent<ProjectProps> {
                 </div>);
         }
 
+        // Parts
+        let renderParts = () => {
+            return (
+                <div>
+                {this.props.rooms.map((room: ProjectRoomDto) =>
+                        <div>
+                            {/*<p>{room.products!.length}</p>*/}
+                            <h3>{room.roomName}</h3>
+                            <table key={room.projectRoomId} className='table table-striped' aria-labelledby="tabelLabel">
+                                <thead>
+                                    <tr>
+                                        <th>Rcvd?</th>
+                                        <th>Bin</th>
+                                        <th>Qty</th>
+                                        <th>Part Number</th>
+                                        <th>Description</th>
+                                        <th>PO #</th>
+                                        <th>Tracking #</th>
+                                        <th>ETA</th>
+                                        <th>Vendor</th>
+                                        <th>Discount Price</th>
+                                        <th>Cost</th>
+                                        <th>Total</th>
+                                        <th>Notes</th>
+                                        <th>Ordered By</th>
+                                        <th>&nbsp;</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {room.products!.map((product: ProjectProductDto) =>
+                                        <tr key={product.projectProductId}>
+                                            <td><AutoSubmitCheckedInput
+                                                name="received"
+                                                label=""
+                                                checked={product.received!}
+                                                endpoint={"project/projectproduct/" + product.projectProductId + "/field"} />
+                                            </td>
+                                            <td>{product.binNumber}</td>
+                                            <td>
+                                                <AutoSubmitNumericInput
+                                                    name="quantity"
+                                                    label=""
+                                                    value={product.quantity!}
+                                                    endpoint={"project/projectproduct/" + product.projectProductId + "/field"} />
+                                            </td>
+                                            <td>{product.partNumber}</td>
+                                            <td>
+                                                <AutoSubmitTextInput
+                                                    name="description"
+                                                    label=""
+                                                    value={product.description!}
+                                                    endpoint={"project/projectproduct/" + product.projectProductId + "/field"} />
+                                            </td>
+                                            <td>{product.poNumber}</td>
+                                            <td>{product.trackingNumber}</td>
+                                            <td>{product.eta}</td>
+                                            <td>{product.vendor}</td>
+                                            <td>${product.quotePrice}</td>
+                                            <td>${product.price}</td>
+                                            <td>${(product.price || 0) * product.quantity!}</td>
+                                            <td>
+                                                <AutoSubmitTextInput
+                                                    name="orderNotes"
+                                                    label=""
+                                                    value={product.orderNotes!}
+                                                    endpoint={"project/projectproduct/" + product.projectProductId + "/field"} />
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    )
+                    }
+                </div>);
+        }
+
+        // Metrics
         let renderMetrics = () => {
             let project = this.props.project;
             let metrics = project.metrics;
@@ -337,114 +422,87 @@ class FetchData extends React.PureComponent<ProjectProps> {
         //    return await this.postData('project/rooms', {id: this.props.match.params.id}); // parses JSON response into native JavaScript objects
         //}
 
+
+        // --- MAIN RENDERING ---
+
         return (
-            <div>
-                <h2>{customer!.name} - {project.name} ({project.jobNumber})</h2>
-                <div>
-                    <h3>Project Details</h3>
-                    <ul className="">
-                        <li className="bigger">
-                            <b>Customer: {customer!.name}</b>
-                        {/*    <a href="/Customer/View/{this.props.project.customer?.customerId}">{this.props.project.customer?.name}</a>*/}
-                        </li>
-                        <li className="bigger">
-                            <b>Contact Name: {customer!.contactName}</b>
-                        </li>
-                        <li className="bigger"><b>Job Number:</b> { project.jobNumber }</li>
-                        <li className="bigger"><b>PO Number:</b> {project.poNumber}</li>
-                    </ul>
-                {/*    <ul class="rightlist">*/}
-                {/*        <li class="bigger"><b>Contact Name:</b> {{ vm.project.ContactName }}</li>*/}
-                {/*        <li> <b>Contact Email:</b> {{ vm.project.Customer ? vm.project.Email : '' }}</li>*/}
-                {/*        <li><b>Phone Number:</b> {{ vm.project.PhoneNumber }}</li>*/}
-                {/*        <li><b>Cell Phone Number:</b> {{ vm.project.CellPhone }}</li>*/}
-
-                {/*    </ul>*/}
-
-                </div>
-
-                <h2>Invoices</h2>
-                {renderInvoices()}
-
-                <h2>Parts</h2>
-                {this.props.rooms.map((room: ProjectRoomDto) =>
-                    <div>
-                        {/*<p>{room.products!.length}</p>*/}
-                        <h3>{room.roomName}</h3>
-                        <table key={room.projectRoomId} className='table table-striped' aria-labelledby="tabelLabel">
-                            <thead>
-                                <tr>
-                                    <th>Rcvd?</th>
-                                    <th>Bin</th>
-                                    <th>Qty</th>
-                                    <th>Part Number</th>
-                                    <th>Description</th>
-                                    <th>PO #</th>
-                                    <th>Tracking #</th>
-                                    <th>ETA</th>
-                                    <th>Vendor</th>
-                                    <th>Discount Price</th>
-                                    <th>Cost</th>
-                                    <th>Total</th>
-                                    <th>Notes</th>
-                                    <th>Ordered By</th>
-                                    <th>&nbsp;</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {room.products!.map((product: ProjectProductDto) =>
-                                    <tr key={product.projectProductId}>
-                                        <td><AutoSubmitCheckedInput
-                                            name="received"
-                                            label=""
-                                            checked={product.received!}
-                                            endpoint={"project/projectproduct/" + product.projectProductId + "/field"}/>
-                                        </td>
-                                        <td>{product.binNumber}</td>
-                                        <td>
-                                            <AutoSubmitNumericInput
-                                                name="quantity"
-                                                label=""
-                                                value={product.quantity!}
-                                                endpoint={"project/projectproduct/" + product.projectProductId + "/field"}/>
-                                        </td>
-                                        <td>{product.partNumber}</td>
-                                        <td>
-                                            <AutoSubmitTextInput
-                                                name="description"
-                                                label=""
-                                                value={product.description!}
-                                                endpoint={"project/projectproduct/" + product.projectProductId + "/field"}/>
-                                        </td>
-                                        <td>{product.poNumber}</td>
-                                        <td>{product.trackingNumber}</td>
-                                        <td>{product.eta}</td>
-                                        <td>{product.vendor}</td>
-                                        <td>${product.quotePrice}</td>
-                                        <td>${product.price}</td>
-                                        <td>${(product.price || 0) * product.quantity!}</td>
-                                        <td>
-                                            <AutoSubmitTextInput
-                                                name="orderNotes"
-                                                label=""
-                                                value={product.orderNotes!}
-                                                endpoint={"project/projectproduct/" + product.projectProductId + "/field"}/>
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
+            <Row>
+                <Col xl="9">
+                    <div id="titleBar">
+                        <h2>{customer!.name} - {project.name} ({project.jobNumber})</h2>
                     </div>
-                )}
-                <h2>Metrics</h2>
-                {renderMetrics()}
-                <h2>Service Plans</h2>
-                {renderServicePlans()}
-                <h2>Trouble Tickets</h2>
-                {renderTroubleTickets()}
-                <h2>Project History</h2>
-                {renderProjectHistory()}
-            </div>
+
+                    <Row>
+                        <Col>
+                            <div className="head">
+                                <h3>Project Details</h3>
+                            </div>
+
+
+                            <ul className="">
+                                <li className="bigger">
+                                    <b>Customer: {customer!.name}</b>
+                                {/*    <a href="/Customer/View/{this.props.project.customer?.customerId}">{this.props.project.customer?.name}</a>*/}
+                                </li>
+                                <li className="bigger">
+                                    <b>Contact Name: {customer!.contactName}</b>
+                                </li>
+                                <li className="bigger"><b>Job Number:</b> { project.jobNumber }</li>
+                                <li className="bigger"><b>PO Number:</b> {project.poNumber}</li>
+                            </ul>
+                            {/*    <ul class="rightlist">*/}
+                            {/*        <li class="bigger"><b>Contact Name:</b> {{ vm.project.ContactName }}</li>*/}
+                            {/*        <li> <b>Contact Email:</b> {{ vm.project.Customer ? vm.project.Email : '' }}</li>*/}
+                            {/*        <li><b>Phone Number:</b> {{ vm.project.PhoneNumber }}</li>*/}
+                            {/*        <li><b>Cell Phone Number:</b> {{ vm.project.CellPhone }}</li>*/}
+                            {/*    </ul>*/}
+                        </Col>
+                    </Row>
+
+                    <Row>
+                        <Col>
+                            <h2>Invoices</h2>
+                            {renderInvoices()}
+                        </Col>
+                    </Row>
+
+                    <Row>
+                        <Col>
+                            <h2>Parts</h2>
+                            {renderParts()}
+                        </Col>
+                    </Row>
+
+                    <Row>
+                        <Col>
+                            <h2>Service Plans</h2>
+                            {renderServicePlans()}
+                        </Col>
+                    </Row>
+
+                    <Row>
+                        <Col>
+                            <h2>Trouble Tickets</h2>
+                            {renderTroubleTickets()}
+                        </Col>
+                    </Row>
+
+                    <Row>
+                        <Col>
+                            <h2>Project History</h2>
+                            {renderProjectHistory()}
+                        </Col>
+                    </Row>
+                </Col>
+                <Col>
+                    <Row>
+                        <Col>
+                            <h2>Metrics</h2>
+                            {renderMetrics()}
+                        </Col>
+                    </Row>
+                </Col>
+            </Row>
         );
     }
 }
