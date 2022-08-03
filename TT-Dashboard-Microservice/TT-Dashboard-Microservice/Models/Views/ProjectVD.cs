@@ -1,38 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TT_Dashboard_Microservice.Models.Dtos;
+using TT_Dashboard_Microservice.Models.Dtos.Project;
+using TT_Dashboard_Microservice.Models.Dtos.Employee;
 
 namespace TT_Dashboard_Microservice.Models.Views
 {
-    public class ProjectPartDto
-    {
-        public ProjectRoom ProjectRoom { get; set; }
-        public int Quantity { get; set; }
-        public string PartNumber { get; set; }
-        public string Description { get; set; }
-        public decimal? QuotePrice { get; set; }
-        public decimal? Price { get; set; }
-        public DateTime? OrderDate { get; set; }
-        public DateTime? ReceiveDate { get; set; }
-        public string BinNumber { get; set; }
-    }
-
-    public class ProductDto
-    {
-
-    }
-
-    public class ProductReceivedDto
-    {
-
-    }
-
-    public class EmployeeDto
-    {
-        public int employeeId { get; set; }
-        public string fullName { get; set; }
-    }
 
     public class ProjectProductFieldUpdateDto
     {
@@ -41,25 +14,6 @@ namespace TT_Dashboard_Microservice.Models.Views
 
     }
 
-    public class ProjectProductDto
-    {
-        public bool received { get; set; }
-        public int projectProductId { get; set; }
-        public string description { get; set; }
-        public int status { get; set; }
-        public int quantity { get; set; }
-        public string binNumber { get; set; }
-        public string vendor { get; set; }
-        public string trackingNumber { get; set; }
-        public decimal? quotePrice { get; set; }
-        public decimal? price { get; set; }
-        public string manufacturer { get; set; }
-        public string partNumber { get; set; }
-        public DateTime? eta { get; set; }
-        public string poNumber { get; set; }
-        public string orderNotes { get; set; }
-
-    }
 
     public class ProjectRoomDto
     {
@@ -135,15 +89,6 @@ namespace TT_Dashboard_Microservice.Models.Views
         public decimal daysSinceInvoice { get; set; }
     }
 
-    public class ItemHistoryDto
-    {
-        public int id { get; set; }
-        public int type { get; set; }
-        public string message { get; set; }
-        public string author { get; set; }
-        public int authorId { get; set; }
-        public string timeStamp { get; set; }
-    }
 
     public class ProjectProductFieldUpdateResultDto
     {

@@ -7,7 +7,6 @@ import * as ProjectStore from '../store/Project';
 import * as NumericInput from "react-numeric-input";
 import { InvoiceDto, ItemHistoryDto, ItemTroubleTicketDto, ProjectProductDto, ProjectRoomDto, ServicePlanDto } from '../apiClient/data-contracts';
 
-
 interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     name: string;
     label: string;
@@ -133,7 +132,6 @@ class FetchData extends React.PureComponent<ProjectProps> {
     public render() {
         return (
             <React.Fragment>
-                {/*<h1 id="tabelLabel">Project</h1>*/}
                 {this.renderProject()}
             </React.Fragment>
         );
@@ -166,11 +164,11 @@ class FetchData extends React.PureComponent<ProjectProps> {
     private renderProject() {
         let id = this.props.match.params.id;
 
-        if (this.props.isLoading) {
+        if (this.props.isProjectLoading) {
             return(<div></div>);
         }
 
-        console.info("Loading? " + this.props.isLoading);
+        console.info("Loading? " + this.props.isProjectLoading);
 
         let project = this.props.project;
         let customer = project.customer;

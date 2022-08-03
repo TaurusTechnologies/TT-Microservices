@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TT_Dashboard_Microservice.Models.Dtos
+namespace TT_Dashboard_Microservice.Models.Dtos.Project
 {
     public class ProjectStartStopDateDto
     {

@@ -5,7 +5,9 @@ using AuthenticationandAuthorization.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TT_Dashboard_Microservice.Models;
-using TT_Dashboard_Microservice.Models.Dtos;
+using TT_Dashboard_Microservice.Models.Dtos.Item;
+using TT_Dashboard_Microservice.Models.Dtos.Project;
+using TT_Dashboard_Microservice.Models.Dtos.Employee;
 using TT_Dashboard_Microservice.Models.Views;
 using TT_Dashboard_Microservice.Models.Enums;
 

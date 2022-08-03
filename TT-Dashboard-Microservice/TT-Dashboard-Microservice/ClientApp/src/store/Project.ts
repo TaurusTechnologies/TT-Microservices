@@ -7,7 +7,7 @@ import { Project as ProjectApi } from '../apiClient/Project';
 // STATE - This defines the type of data maintained in the Redux store.
 
 export interface ProjectState {
-    isLoading: boolean;
+    isProjectLoading: boolean;
     id: number;
     project: ProjectDto;
     rooms: ProjectRoomDto[];
@@ -135,7 +135,7 @@ export const actionCreators = {
 // REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
 
 const unloadedState: ProjectState = {
-    id: 0, isLoading: true,
+    id: 0, isProjectLoading: true,
     project: {
         projectId: 0, name: '', jobNumber: '', poNumber: '', phoneNumber: '',
         faxNumber: '', cellNumber: '', contactName: '',
@@ -160,7 +160,7 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
             return {
                 id: action.id,
                 project: state.project,
-                isLoading: true,
+                isProjectLoading: true,
                 rooms: state.rooms,
                 invoices: state.invoices,
                 itemHistory: state.itemHistory,
@@ -174,7 +174,7 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                 return {
                     id: action.id,
                     project: action.project,
-                    isLoading: true,
+                    isProjectLoading: true,
                     rooms: state.rooms,
                     invoices: state.invoices,
                     itemHistory: state.itemHistory,
@@ -187,7 +187,7 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
             return {
                 id: action.id,
                 project: state.project,
-                isLoading: true,
+                isProjectLoading: true,
                 rooms: state.rooms,
                 invoices: state.invoices,
                 itemHistory: state.itemHistory,
@@ -201,7 +201,7 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                 return {
                     id: action.id,
                     project: state.project,
-                    isLoading: true,
+                    isProjectLoading: true,
                     rooms: action.rooms,
                     invoices: state.invoices,
                     itemHistory: state.itemHistory,
@@ -214,7 +214,7 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
             return {
                 id: action.id,
                 project: state.project,
-                isLoading: true,
+                isProjectLoading: true,
                 rooms: state.rooms,
                 invoices: state.invoices,
                 itemHistory: state.itemHistory,
@@ -228,7 +228,7 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                 return {
                     id: action.id,
                     project: state.project,
-                    isLoading: true,
+                    isProjectLoading: true,
                     rooms: state.rooms,
                     invoices: state.invoices,
                     itemHistory: action.itemHistory,
@@ -241,7 +241,7 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
             return {
                 id: action.id,
                 project: state.project,
-                isLoading: true,
+                isProjectLoading: true,
                 rooms: state.rooms,
                 invoices: state.invoices,
                 itemHistory: state.itemHistory,
@@ -255,7 +255,7 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                 return {
                     id: action.id,
                     project: state.project,
-                    isLoading: true,
+                    isProjectLoading: true,
                     rooms: state.rooms,
                     invoices: action.invoices,
                     itemHistory: state.itemHistory,
@@ -268,7 +268,7 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
             return {
                 id: action.id,
                 project: state.project,
-                isLoading: true,
+                isProjectLoading: true,
                 rooms: state.rooms,
                 invoices: state.invoices,
                 itemHistory: state.itemHistory,
@@ -282,7 +282,7 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                 return {
                     id: action.id,
                     project: state.project,
-                    isLoading: true,
+                    isProjectLoading: true,
                     rooms: state.rooms,
                     invoices: state.invoices,
                     itemHistory: state.itemHistory,
@@ -295,7 +295,7 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
             return {
                 id: action.id,
                 project: state.project,
-                isLoading: true,
+                isProjectLoading: true,
                 rooms: state.rooms,
                 invoices: state.invoices,
                 itemHistory: state.itemHistory,
@@ -309,7 +309,7 @@ export const reducer: Reducer<ProjectState> = (state: ProjectState | undefined, 
                 return {
                     id: action.id,
                     project: state.project,
-                    isLoading: false,
+                    isProjectLoading: false,
                     rooms: state.rooms,
                     invoices: state.invoices,
                     itemHistory: state.itemHistory,
