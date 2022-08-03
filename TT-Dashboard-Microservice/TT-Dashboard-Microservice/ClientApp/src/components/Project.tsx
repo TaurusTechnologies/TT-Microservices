@@ -6,7 +6,7 @@ import { ApplicationState } from '../store';
 import * as ProjectStore from '../store/Project';
 import * as NumericInput from "react-numeric-input";
 import { InvoiceDto, ItemHistoryDto, ItemTroubleTicketDto, ProjectProductDto, ProjectRoomDto, ServicePlanDto } from '../apiClient/data-contracts';
-import { Accordion, Row, Col, AccordionHeader, AccordionBody, Table } from 'reactstrap';
+import { Accordion, Row, Col, AccordionHeader, AccordionBody, Table, Button } from 'reactstrap';
 
 import './Project.css';
 
@@ -177,15 +177,36 @@ class FetchData extends React.PureComponent<ProjectProps> {
         // Project History
         let renderProjectHistory = () => {
             return (
-                <div>
-                    <ul>
-                        {this.props.itemHistory.map((item: ItemHistoryDto) =>
-                            <li key={item.id}>
-                                {item.message}
-                            </li>
-                    )}
-                    </ul>
-                 </div>);
+                <Row>
+                    <Col>
+                        <Row>
+                            <Col>
+                            <textarea name="historycomment" id="historycomment" className="historycomment"
+                                rows={10} cols={30} placeholder="New Comment">
+                                </textarea>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col>
+                                <Button color="primary">Submit Comment</Button>
+                            </Col>
+                        </Row>
+                    </Col>
+                    <Col>
+                        <ul>
+                            {this.props.itemHistory
+                                .filter(x => x.type == 1)
+                                .map((item: ItemHistoryDto) =>
+                                    <li key={item.id}>
+                                        <p dangerouslySetInnerHTML={{ __html: item.message! }} />
+                                        <p>
+                                            <b>by: {item.author}</b> - {item.timeStamp }
+                                        </p>
+                                    </li>
+                        )}
+                        </ul>
+                    </Col>
+                 </Row>);
         }
 
         // Trouble Tickets
