@@ -436,30 +436,67 @@ class FetchData extends React.PureComponent<ProjectProps> {
                             <Row>
                                 <Col>
                                     <ul>
-                                        <li className="bigger">
-                                            <b>Customer:</b> {customer!.name}
-                                            {/*    <a href="/Customer/View/{this.props.project.customer?.customerId}">{this.props.project.customer?.name}</a>*/}
-                                        </li>
-                                        <li className="bigger"><b>Job Number:</b> {project.jobNumber}</li>
-                                        <li className="bigger"><b>PO Number:</b> {project.poNumber}</li>
+                                        <li><b>Customer:</b> {customer!.name}{/*    <a href="/Customer/View/{this.props.project.customer?.customerId}">{this.props.project.customer?.name}</a>*/}</li>
+                                        <li><b>Job Number:</b> {project.jobNumber}</li>
+                                        <li><b>PO Number:</b> {project.poNumber}</li>
                                     </ul>
                                 </Col>
                                 <Col>
                                     <ul>
-                                        <li className="bigger">
-                                            <b>Contact Name:</b> {customer!.contactName}
-                                        </li>
+                                        <li><b>Contact Name:</b> {customer!.contactName}</li>
+                                        <li><b>Contact Email:</b> {project.contactEmail}</li>
+                                        <li><b>Phone number:</b> {project.phoneNumber}</li>
+                                        <li><b>Cell number:</b> {project.cellNumber}</li>
                                     </ul>
                                 </Col>
                             </Row>
+                        </Col>
+                    </Row>
 
-
-                            {/*    <ul class="rightlist">*/}
-                            {/*        <li class="bigger"><b>Contact Name:</b> {{ vm.project.ContactName }}</li>*/}
-                            {/*        <li> <b>Contact Email:</b> {{ vm.project.Customer ? vm.project.Email : '' }}</li>*/}
-                            {/*        <li><b>Phone Number:</b> {{ vm.project.PhoneNumber }}</li>*/}
-                            {/*        <li><b>Cell Phone Number:</b> {{ vm.project.CellPhone }}</li>*/}
-                            {/*    </ul>*/}
+                    <Row>
+                        <Col>
+                            <h3>More Details</h3>
+                            <Row>
+                                <Col>
+                                    <ul>
+                                        <li><b>Install Address 1:</b> {project.installAddress!.address1}</li>
+                                        <li><b>Install Address 2:</b> {project.installAddress!.address2}</li>
+                                        <li><b>Install City:</b> {project.installAddress!.city}</li>
+                                        <li><b>Install State:</b> {project.installAddress!.state}</li>
+                                        <li><b>Install Zip:</b> {project.installAddress!.zip}</li>
+                                        <li></li>
+                                        <li><b>Shipping Location:</b> {project.shippingAddress!.locationName}</li>
+                                        <li><b>Shipping Address 1:</b> {project.shippingAddress!.address1}</li>
+                                        <li><b>Shipping Address 2:</b> {project.shippingAddress!.address2 }</li>
+                                        <li><b>Shipping City:</b> {project.shippingAddress!.city}</li>
+                                        <li><b>Shipping State:</b> {project.shippingAddress!.state}</li>
+                                        <li><b>Shipping Zip:</b> {project.shippingAddress!.zip}</li>
+                                    </ul>
+                                </Col>
+                                <Col>
+                                    <ul>
+                                        <li><b>Fax Number:</b> {project.faxNumber}</li>
+                                        <li></li>
+                                        <li><b>Billing Name:</b> {project.billingName}</li>
+                                        <li><b>Billing Email:</b> {project.billingEmail}</li>
+                                        <li><b>Billing Address 1:</b> { project.billingAddress!.address1}</li>
+                                        <li><b>Billing Address 2:</b> {project.billingAddress!.address2}</li>
+                                        <li><b>Billing City:</b> {project.billingAddress!.city}</li>
+                                        <li><b>Billing State:</b> {project.billingAddress!.state}</li>
+                                        <li><b>Billing Zip:</b> {project.billingAddress!.zip}</li>
+                                        <li></li>
+                                        <li>
+                                            <b>Rooms:</b>
+                                            {this.props.rooms.filter(x => x.isActive).map((room: ProjectRoomDto) =>
+                                                <span>
+                                                    <a href="/Customer/ViewRoom/{{room.RoomId}}">{room.roomName}, </a>
+                                                </span>
+                                            )}
+                                        </li>
+                                        <li><b>Notes:</b> {project.notes }</li>
+                                    </ul>
+                                </Col>
+                            </Row>
                         </Col>
                     </Row>
 
