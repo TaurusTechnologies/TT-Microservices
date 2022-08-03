@@ -6,7 +6,7 @@ import { ApplicationState } from '../store';
 import * as ProjectStore from '../store/Project';
 import * as NumericInput from "react-numeric-input";
 import { InvoiceDto, ItemHistoryDto, ItemTroubleTicketDto, ProjectProductDto, ProjectRoomDto, ServicePlanDto } from '../apiClient/data-contracts';
-import { Accordion, Row, Col } from 'reactstrap';
+import { Accordion, Row, Col, AccordionHeader, AccordionBody, Table } from 'reactstrap';
 
 import './Project.css';
 
@@ -171,8 +171,6 @@ class FetchData extends React.PureComponent<ProjectProps> {
             return(<div>Loading...</div>);
         }
 
-        console.info("Loading? " + this.props.isProjectLoading);
-
         let project = this.props.project;
         let customer = project.customer;
 
@@ -194,7 +192,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
         let renderTroubleTickets = () => {
             return (
                 <div>
-                    <table className='table table-striped' aria-labelledby="tabelLabel">
+                    <Table striped dark>
                         <thead>
                             <tr>
                                 <th>Title</th>
@@ -231,7 +229,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
 
                         </tbody>
 
-                    </table>
+                    </Table>
                 </div>);
         }
 
@@ -239,7 +237,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
         let renderInvoices = () => {
             return (
                 <div>
-                    <table className='table table-striped' aria-labelledby="tabelLabel">
+                    <Table striped dark aria-labelledby="tabelLabel">
                         <thead>
                             <tr>
                                 <th>Date</th>
@@ -268,7 +266,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
 
                         </tbody>
 
-                    </table>
+                    </Table>
                 </div>);
         }
 
@@ -276,7 +274,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
         let renderServicePlans = () => {
             return (
                 <div>
-                    <table className='table table-striped' aria-labelledby="tabelLabel">
+                    <Table dark striped aria-labelledby="tabelLabel">
                         <thead>
                             <tr>
                                 <th>Provider</th>
@@ -301,7 +299,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
 
                         </tbody>
 
-                    </table>
+                    </Table>
                 </div>);
         }
 
@@ -310,10 +308,10 @@ class FetchData extends React.PureComponent<ProjectProps> {
             return (
                 <div>
                 {this.props.rooms.map((room: ProjectRoomDto) =>
-                        <div>
+                        <div className="table-responsive">
                             {/*<p>{room.products!.length}</p>*/}
                             <h3>{room.roomName}</h3>
-                            <table key={room.projectRoomId} className='table table-striped' aria-labelledby="tabelLabel">
+                            <Table key={room.projectRoomId} striped dark>
                                 <thead>
                                     <tr>
                                         <th>Rcvd?</th>
@@ -375,7 +373,7 @@ class FetchData extends React.PureComponent<ProjectProps> {
                                         </tr>
                                     )}
                                 </tbody>
-                            </table>
+                            </Table>
                         </div>
                     )
                     }
@@ -434,22 +432,28 @@ class FetchData extends React.PureComponent<ProjectProps> {
 
                     <Row>
                         <Col>
-                            <div className="head">
-                                <h3>Project Details</h3>
-                            </div>
+                            <h3>Project Details</h3>
+                            <Row>
+                                <Col>
+                                    <ul>
+                                        <li className="bigger">
+                                            <b>Customer:</b> {customer!.name}
+                                            {/*    <a href="/Customer/View/{this.props.project.customer?.customerId}">{this.props.project.customer?.name}</a>*/}
+                                        </li>
+                                        <li className="bigger"><b>Job Number:</b> {project.jobNumber}</li>
+                                        <li className="bigger"><b>PO Number:</b> {project.poNumber}</li>
+                                    </ul>
+                                </Col>
+                                <Col>
+                                    <ul>
+                                        <li className="bigger">
+                                            <b>Contact Name:</b> {customer!.contactName}
+                                        </li>
+                                    </ul>
+                                </Col>
+                            </Row>
 
 
-                            <ul className="">
-                                <li className="bigger">
-                                    <b>Customer: {customer!.name}</b>
-                                {/*    <a href="/Customer/View/{this.props.project.customer?.customerId}">{this.props.project.customer?.name}</a>*/}
-                                </li>
-                                <li className="bigger">
-                                    <b>Contact Name: {customer!.contactName}</b>
-                                </li>
-                                <li className="bigger"><b>Job Number:</b> { project.jobNumber }</li>
-                                <li className="bigger"><b>PO Number:</b> {project.poNumber}</li>
-                            </ul>
                             {/*    <ul class="rightlist">*/}
                             {/*        <li class="bigger"><b>Contact Name:</b> {{ vm.project.ContactName }}</li>*/}
                             {/*        <li> <b>Contact Email:</b> {{ vm.project.Customer ? vm.project.Email : '' }}</li>*/}
